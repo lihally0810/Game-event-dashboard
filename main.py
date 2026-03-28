@@ -59,7 +59,7 @@ def get_events_json(raw_data):
         return []
 
     genai.configure(api_key=GOOGLE_API_KEY)
-    model = genai.GenerativeModel('gemini-1.5-flash')
+    model = genai.GenerativeModel('gemini-1.5-flash-latest')
     
     prompt = f"""
 너는 게임 데이터 분석가야. 아래 제공된 네이버 게임 라운지 데이터를 분석해서 한정 이벤트 정보를 JSON 배열로 반환해줘.
