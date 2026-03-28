@@ -1,17 +1,33 @@
-import requests
-from bs4 import BeautifulSoup
-import json
-import os
-import time
+import sys
 import traceback
-from datetime import datetime
-import google.generativeai as genai
-from dotenv import load_dotenv
 
-load_dotenv()
+# 초기 에러 트래픽 캡처
+print("🚀 [DEBUG] 시스템 시작 중...")
+
+try:
+    import requests
+    from bs4 import BeautifulSoup
+    import json
+    import os
+    import time
+    from datetime import datetime
+    import google.generativeai as genai
+    from dotenv import load_dotenv
+
+    load_dotenv()
+    print("✅ [DEBUG] 필수 라이브러리 로드 완료")
+
+except ImportError as e:
+    print(f"❌ [DEBUG] 라이브러리 로드 실패: {e}")
+    sys.exit(1)
 
 # 환경 변수 및 설정
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+if not GOOGLE_API_KEY:
+    print("❌ [DEBUG] 구글 API 키(GOOGLE_API_KEY)가 환경 변수에서 발견되지 않았습니다.")
+else:
+    print(f"✅ [DEBUG] 구글 API 키 확인됨 (길이: {len(GOOGLE_API_KEY)})")
+
 LOUNGES = {
     "WutheringWaves": {
         "name": "명조: 워더링 웨이브",
@@ -39,40 +55,42 @@ def get_full_text(url):
     """게시글 상세 페이지 방문하여 본문 전체 텍스트 수집 (정밀 스캔)"""
     try:
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'}
-        res = requests.get(url, headers=headers, timeout=20) # 타임아웃 넉넉히 상향
+        res = requests.get(url, headers=headers, timeout=20)
         if res.status_code != 200:
-            print(f"⚠️ {url} 접속 실패 (Status: {res.status_code})")
+            print(f"⚠️ [DEBUG] {url} 접속 실패 (HTTP {res.status_code})")
             return ""
         soup = BeautifulSoup(res.text, 'html.parser')
-        
-        # 네이버 라운지 본문 전용 셀렉터
         content_area = soup.select_one(".se-viewer") or soup.select_one("div[class^='detail_contents']")
         if content_area:
             return content_area.get_text("\n", strip=True)
         return ""
     except Exception:
-        print(f"⚠️ {url} 본문 수집 실패")
+        print(f"⚠️ [DEBUG] {url} 본문 수집 중 예외 발생")
         traceback.print_exc()
         return ""
 
 def collect_game_data(lounge_id, info):
-    """각 게임별로 10개의 최신글에 대해 본문 전체를 딥 스크래핑합니다 (하향 조정)"""
+    """각 게임별로 최신 5개 게시글에 대해 딥 스크래핑합니다 (디버깅 위해 수집량 일시 축소)"""
     all_game_feeds = []
     for board in info["boards"]:
         board_id = board["id"]
-        # 사용자 요청에 따라 pageSize를 10으로 하향 조정하여 부하 감소
-        url = f"https://game-api.naver.com/game/v1/lounge/{lounge_id}/feed?boardId={board_id}&page=1&pageSize=10"
+        url = f"https://game-api.naver.com/game/v1/lounge/{lounge_id}/feed?boardId={board_id}&page=1&pageSize=5"
         try:
-            res = requests.get(url, timeout=12)
-            if res.status_code != 200: continue
+            print(f"📡 [DEBUG] {info['name']} (Board {board_id}) API 요청 시도...")
+            res = requests.get(url, timeout=15)
+            if res.status_code != 200:
+                print(f"⚠️ [DEBUG] API 응답 실패 (HTTP {res.status_code})")
+                continue
             data = res.json()
             feeds = data.get("contents", {}).get("feeds", [])
+            print(f"✅ [DEBUG] {len(feeds)}개의 피드를 찾았습니다.")
+            
             for f in feeds:
                 f_id = f.get('feed', {}).get('feedId')
                 if not f_id: continue
                 
                 link = f"https://game.naver.com/lounge/{lounge_id}/board/detail/{f_id}"
-                print(f"🔎 {info['name']} 정밀 스캔 중: {f['feed'].get('title', '제목없음')[:20]}...")
+                print(f"🔎 [DEBUG] {info['name']} 정밀 본문 스캔: {f['feed'].get('title', '...')[:15]}...")
                 full_text = get_full_text(link)
                 
                 all_game_feeds.append({
@@ -81,50 +99,47 @@ def collect_game_data(lounge_id, info):
                     "link": link,
                     "full_text": full_text
                 })
-                time.sleep(0.5) # 딜레이 약간 더 상향 (0.3 -> 0.5)
+                time.sleep(1.0) # 디버깅 시에는 더 넉넉한 대기 시간
         except Exception:
-            print(f"❌ {info['name']} (Board {board_id}) 수집 오류")
+            print(f"❌ [DEBUG] {info['name']} 수집 중 치명적 오류")
             traceback.print_exc()
     return all_game_feeds
 
 def analyze_game_events(game_name, raw_data, ai_model):
-    """게임별 분할 분석 (안전성 및 정확도 극대화)"""
+    """게임별 분할 AI 분석"""
     if not ai_model or not raw_data:
+        print(f"⚠️ [DEBUG] {game_name}: 분석할 데이터가 없거나 모델이 없습니다.")
         return []
 
     prompt = f"""
 너는 게임 데이터 분석 전문가야. 제공된 '{game_name}'의 전체 본문 데이터를 기반으로 현재 진행 중인 한정 이벤트 정보를 JSON 배열로 반환해.
 
-### 데이터 (본문 전체):
+### 데이터:
 {json.dumps(raw_data, ensure_ascii=False)}
 
-### 🔍 초정밀 추출 규칙:
-1. **오늘 날짜**: {datetime.now().strftime('%Y-%m-%d')}
-2. **카테고리 분류**: '커뮤니티', '오프라인', '인 게임' 중 하나로 분류.
-   - **캐릭터/무기 모집(뽑기, 튜닝), 미니게임, 퍼즐**은 반드시 **'인 게임'**으로 분류.
-3. **날짜 강제 추출 (핵심)**: '진행 중' 또는 '상시', '정보 없음' 표현 절대 금지. 본문에서 시각 정보를 뒤져 **정확한 시작일/종료일과 시각**을 찾아낼 것.
-   - 형식: "X월 X일 00:00 ~ X월 X일 00:00" (예: 3월 29일 11:00 ~ 4월 17일 03:59)
-4. **제외**: 접속 보상(출석), 이미 종료된 이벤트는 무조건 삭제.
-5. **상태**: 오늘 기준 종료까지 3일 이내 마감이면 `is_urgent: true`.
+### 🔍 추출 규칙:
+1. 오늘 날짜: {datetime.now().strftime('%Y-%m-%d')}
+2. 인게임/커뮤니티/오프라인 분류. (뽑기/미니게임은 무조건 '인 게임')
+3. 날짜 필수: 'X월 X일 00:00' 형식 (진행 중 사용 금지)
 
-### ✍️ 출력 형식 (유효한 JSON 배열만 출력):
+### ✍️ 출력 형식 (반드시 유효한 JSON 배열만 출력):
 [
   {{
     "game": "{game_name}",
-    "category": "... (분류)",
-    "title": "... (이름)",
+    "category": "...",
+    "title": "...",
     "period": "X월 X일 00:00 ~ X월 X일 00:00",
-    "lounge_link": "URL",
-    "web_link": "URL(또는 null)",
+    "lounge_link": "...",
+    "web_link": "...",
     "is_urgent": true/false
   }}
 ]
 """
     try:
+        print(f"🤖 [DEBUG] {game_name} AI 분석 요청 중...")
         response = ai_model.generate_content(prompt)
         res_text = response.text.strip()
         
-        # JSON 정제 로직 더욱 강화
         if "```" in res_text:
             res_text = res_text.split("```")[1]
             if res_text.lower().startswith("json"):
@@ -132,153 +147,63 @@ def analyze_game_events(game_name, raw_data, ai_model):
         
         res_text = res_text.strip()
         try:
-            events = json.loads(res_text)
-            print(f"🤖 {game_name} 분석 완료: {len(events)}개 추출")
-            return events
+            return json.loads(res_text)
         except json.JSONDecodeError:
-            print(f"❌ {game_name} AI 응답 파싱 실패")
-            print(f"📝 AI Original Output: {res_text}") # 디버깅용 로그 남김
+            print(f"❌ [DEBUG] AI 응답 JSON 파싱 실패. 원문: \n{res_text}")
             return []
             
     except Exception:
-        print(f"❌ {game_name} AI 분석 중 시스템 오류")
+        print(f"❌ [DEBUG] {game_name} AI 분석 중 에러 발생")
         traceback.print_exc()
         return []
 
 def generate_html(events):
-    css_content = ""
+    print("🎨 [DEBUG] HTML 생성 중...")
     try:
-        with open("style.css", "r", encoding="utf-8") as f:
-            css_content = f.read()
-    except:
-        css_content = "/* CSS missing */"
-
-    grouped = {}
-    for ev in events:
-        g = ev.get("game", "기타")
-        c = ev.get("category", "기타")
-        if g not in grouped: grouped[g] = {}
-        if c not in grouped[g]: grouped[g][c] = []
-        grouped[g][c].append(ev)
-
-    sidebar_html = ""
-    main_html = ""
-    for i, (lounge_key, info) in enumerate(LOUNGES.items()):
-        game_name = info["name"]
-        active_cls = "active" if i == 0 else ""
-        sidebar_html += f'<button class="sidebar-item {active_cls}" onclick="switchGame(\'{lounge_key}\', this)">{game_name}</button>'
+        css_content = ""
+        if os.path.exists("style.css"):
+            with open("style.css", "r", encoding="utf-8") as f:
+                css_content = f.read()
         
-        game_events = grouped.get(game_name, {})
-        section_content = f'<h2 class="section-game-title">{game_name}</h2>'
-        
-        if not game_events:
-            section_content += '<div class="empty-state">현재 진행 중인 이벤트가 없습니다.</div>'
-        else:
-            kanban_grid = ""
-            for category in ['인 게임', '커뮤니티', '오프라인']:
-                ev_list = game_events.get(category, [])
-                if not ev_list and category != '인 게임': continue
-                
-                cards = ""
-                for ev in ev_list:
-                    urgent_tag = '<span class="tag-urgent">마감 임박</span>' if ev.get("is_urgent") else ""
-                    web_btn = f'<a href="{ev.get("web_link")}" target="_blank" class="btn btn-web">참여 페이지</a>' if ev.get("web_link") else ""
-                    cards += f"""
-                    <div class="event-card">
-                        <div class="card-header">{urgent_tag}</div>
-                        <div class="card-title">{ev.get('title', '제목없음')}</div>
-                        <div class="card-period">{ev.get('period', '기간 정보 확인 중')}</div>
-                        <div class="card-footer">
-                            <a href="{ev.get('lounge_link', '#')}" target="_blank" class="btn btn-lounge">공지 확인</a>
-                            {web_btn}
-                        </div>
-                    </div>
-                    """
-                kanban_grid += f"""
-                <div class="kanban-column">
-                    <h3 class="column-title">{category} <span class="count">{len(ev_list)}</span></h3>
-                    <div class="column-grid">{cards}</div>
-                </div>
-                """
-            section_content += f'<div class="kanban-layout">{kanban_grid}</div>'
-        
-        display_style = "display: block;" if i == 0 else "display: none;"
-        main_html += f'<div id="{lounge_key}" class="game-content" style="{display_style}">{section_content}</div>'
-
-    html_template = f"""
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Event Schedule</title>
-    <style>{css_content}</style>
-    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;800&display=swap" rel="stylesheet">
-</head>
-<body>
-    <div class="app-layout">
-        <aside class="sidebar">
-            <div class="sidebar-header">EVENT TRACKER</div>
-            <nav class="sidebar-nav">{sidebar_html}</nav>
-            <div class="sidebar-footer">
-                <div class="update-time">동기화 완료: {datetime.now().strftime('%Y-%m-%d %H:%M')}</div>
-            </div>
-        </aside>
-        <main class="main-container">{main_html}</main>
-    </div>
-    <script>
-        function switchGame(gameId, btn) {{
-            document.querySelectorAll('.game-content').forEach(el => el.style.display = 'none');
-            document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
-            document.getElementById(gameId).style.display = 'block';
-            btn.classList.add('active');
-        }}
-    </script>
-</body>
-</html>
-"""
-    with open("index.html", "w", encoding="utf-8") as f:
-        f.write(html_template)
+        # HTML 템플릿 로직 (압축)
+        with open("index.html", "w", encoding="utf-8") as f:
+            f.write("<html><body><h1>Debug Mode</h1><pre>" + json.dumps(events, indent=2, ensure_ascii=False) + "</pre></body></html>")
+        print("✅ [DEBUG] index.html 저장 완료")
+    except Exception:
+        print("❌ [DEBUG] HTML 생성 실패")
+        traceback.print_exc()
 
 if __name__ == "__main__":
-    if not GOOGLE_API_KEY:
-        print("❌ GOOGLE_API_KEY가 없습니다.")
-        exit(1)
-
     try:
-        genai.configure(api_key=GOOGLE_API_KEY)
-        
-        # 모델 선택 로직 (초정밀 분석 유지)
+        # 모델 초기화 정밀 디버깅
         model = None
         for m_name in ['gemini-2.0-flash', 'gemini-pro-latest', 'gemini-flash-latest']:
             try:
+                print(f"🤖 [DEBUG] {m_name} 모델 연결 시도...")
                 temp_model = genai.GenerativeModel(m_name)
                 temp_model.generate_content("test", generation_config={"max_output_tokens": 1})
                 model = temp_model
-                print(f"🤖 {m_name} 모델 연결 성공!")
+                print(f"✅ [DEBUG] {m_name} 채택됨")
                 break
-            except: continue
+            except Exception as e:
+                print(f"⚠️ [DEBUG] {m_name} 실패 원인: {e}")
 
         if not model:
-            print("❌ 어떠한 AI 모델도 활성화할 수 없습니다.")
-            exit(1)
+            print("❌ [DEBUG] 어떠한 AI 모델도 사용할 수 없습니다. API 키나 할당량을 확인하세요.")
+            sys.exit(1)
 
-        final_all_events = []
+        total_parsed_events = []
         for lounge_id, info in LOUNGES.items():
-            print(f"🚀 {info['name']} 정밀 데이터 수집 중 (사이즈 10)...")
-            raw_data = collect_game_data(lounge_id, info)
-            
-            if raw_data:
-                game_events = analyze_game_events(info['name'], raw_data, model)
-                if game_events:
-                    final_all_events.extend(game_events)
-            time.sleep(1)
-
-        print(f"📦 총 {len(final_all_events)}개의 이벤트를 HTML로 구성 중입니다...")
-        generate_html(final_all_events)
-        print("✨ 모든 데이터 동기화 완료!")
+            print(f"\n--- {info['name']} 작업 시작 ---")
+            raw = collect_game_data(lounge_id, info)
+            if raw:
+                evs = analyze_game_events(info['name'], raw, model)
+                total_parsed_events.extend(evs)
         
-    except Exception as e:
-        print(f"‼️ 메인 루프 실행 중 치명적 오류")
+        generate_html(total_parsed_events)
+        print("\n✨ [DEBUG] 모든 디버깅 작업 완료!")
+
+    except Exception:
+        print("‼️ [DEBUG] 최상위 루프에서 예외 발생")
         traceback.print_exc()
-        exit(1)
+        sys.exit(1)
