@@ -60,17 +60,19 @@ def get_events_json(raw_data):
 
     genai.configure(api_key=GOOGLE_API_KEY)
     
-    # 가용 가능한 모델 후보군 (404 및 429 에러 방지)
-    model_candidates = ['gemini-1.5-flash', 'gemini-pro', 'gemini-1.5-flash-latest', 'gemini-pro-latest']
+    # 가용 가능한 모델 후보군 (사용자 환경 리스트 기반으로 재구성)
+    model_candidates = ['gemini-pro-latest', 'gemini-flash-latest', 'gemini-2.0-flash']
     model = None
     
     for model_name in model_candidates:
         try:
             print(f"🤖 {model_name} 모델로 분석 시도 중...")
             temp_model = genai.GenerativeModel(model_name)
-            # 모델 작동 여부 가볍게 테스트 (선택 사항이지만 안전함)
+            # 모델이 정말 작동하는지 가볍게 테스트 (에러 발생 시 즉시 감지)
+            temp_model.generate_content("test", generation_config={"max_output_tokens": 1})
             model = temp_model
-            break # 작동하면 루프 탈출
+            print(f"✅ {model_name} 모델 연결 성공!")
+            break 
         except Exception as e:
             print(f"⚠️ {model_name} 모델 사용 불가: {e}")
             continue
