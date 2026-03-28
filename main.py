@@ -11,6 +11,11 @@ load_dotenv()
 # 설정값
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 
+if GOOGLE_API_KEY:
+    print("✅ GOOGLE_API_KEY를 찾았습니다.")
+else:
+    print("⚠️ GOOGLE_API_KEY가 설정되지 않았습니다. AI 분석이 불가능합니다.")
+
 # 게임별 라운지 및 게시판 정보
 LOUNGES = {
     "WutheringWaves": {"name": "명조: 워더링 웨이브", "boards": [1, 3]},
@@ -136,31 +141,39 @@ def generate_html(events):
             grouped_events[game_name] = []
         grouped_events[game_name].append(ev)
 
-    for game, ev_list in grouped_events.items():
-        cards = ""
-        for ev in ev_list:
-            urgent_tag = '<div class="urgent-tag">⚠️ 마감 임박</div>' if ev.get("is_urgent") else ""
-            expired_cls = "expired" if ev.get("is_expired") else ""
-            web_btn = f'<a href="{ev["web_link"]}" target="_blank" class="btn btn-web">참여하기</a>' if ev.get("web_link") else ""
-            
-            cards += f"""
-            <div class="event-card {expired_cls}">
-                {urgent_tag}
-                <div class="event-title">{ev['title']}</div>
-                <div class="event-period">{ev['period']}</div>
-                <div class="event-actions">
-                    <a href="{ev['lounge_link']}" target="_blank" class="btn btn-lounge">라운지</a>
-                    {web_btn}
-                </div>
-            </div>
-            """
-        
-        sections += f"""
-        <div class="game-section">
-            <div class="game-title">{game}</div>
-            <div class="event-grid">{cards}</div>
+    if not grouped_events:
+        sections = """
+        <div class="empty-state">
+            <p>현재 표시할 이벤트가 없습니다.</p>
+            <p><small>GitHub Secrets에 <b>GOOGLE_API_KEY</b>가 올바르게 등록되어 있는지 확인해 주세요.</small></p>
         </div>
         """
+    else:
+        for game, ev_list in grouped_events.items():
+            cards = ""
+            for ev in ev_list:
+                urgent_tag = '<div class="urgent-tag">⚠️ 마감 임박</div>' if ev.get("is_urgent") else ""
+                expired_cls = "expired" if ev.get("is_expired") else ""
+                web_btn = f'<a href="{ev["web_link"]}" target="_blank" class="btn btn-web">참여하기</a>' if ev.get("web_link") else ""
+                
+                cards += f"""
+                <div class="event-card {expired_cls}">
+                    {urgent_tag}
+                    <div class="event-title">{ev['title']}</div>
+                    <div class="event-period">{ev['period']}</div>
+                    <div class="event-actions">
+                        <a href="{ev['lounge_link']}" target="_blank" class="btn btn-lounge">라운지</a>
+                        {web_btn}
+                    </div>
+                </div>
+                """
+            
+            sections += f"""
+            <div class="game-section">
+                <div class="game-title">{game}</div>
+                <div class="event-grid">{cards}</div>
+            </div>
+            """
 
     final_html = html_template.replace("{sections}", sections)
     
