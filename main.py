@@ -48,7 +48,9 @@ def collect_all_data():
                     "content_preview": feed["feed"].get("contents", "")[:500]
                 }
                 game_feeds.append(feed_data)
+        print(f"📡 {info['name']}에서 {len(game_feeds)}개의 소식을 가져왔습니다.")
         collection.append({"game": info["name"], "feeds": game_feeds})
+    print(f"📊 총 {sum(len(c['feeds']) for c in collection)}개의 데이터를 수집했습니다.")
     return collection
 
 def get_events_json(raw_data):
@@ -87,15 +89,21 @@ def get_events_json(raw_data):
 """
     try:
         response = model.generate_content(prompt)
-        # JSON 문자열 추출 (마크다운 코드 블록 제거)
         res_text = response.text.strip()
+        
+        # JSON 문자열 추출 (마크다운 코드 블록 제거)
         if res_text.startswith("```"):
             res_text = res_text.split("```")[1]
             if res_text.startswith("json"):
                 res_text = res_text[4:]
-        return json.loads(res_text.strip())
+        
+        events_list = json.loads(res_text.strip())
+        print(f"🤖 AI가 이벤트를 {len(events_list)}개 추출했습니다.")
+        return events_list
     except Exception as e:
         print(f"❌ LLM 처리 중 오류: {e}")
+        if 'response' in locals() and hasattr(response, 'text'):
+            print(f"🔍 AI 원본 응답 요약: {response.text[:100]}...")
         return []
 
 def generate_html(events):
