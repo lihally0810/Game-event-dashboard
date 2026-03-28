@@ -4,366 +4,570 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Event Tracker</title>
+    <title>Game Event Schedule</title>
     <style>:root {
-    --bg-color: #0f172a;
-    --card-bg: rgba(30, 41, 59, 0.7);
-    --text-primary: #f8fafc;
-    --text-secondary: #94a3b8;
-    --accent-blue: #38bdf8;
-    --accent-purple: #818cf8;
-    --accent-red: #fb7185;
-    --glass-border: rgba(255, 255, 255, 0.1);
+    --bg-dark: #1e1f22;          /* 디스코드 스타일 배경 */
+    --bg-sidebar: #2b2d31;       /* 사이드바 배경 */
+    --accent: #5865f2;           /* 포인트 컬러 (Blurple) */
+    --text-main: #dbdee1;        /* 메인 텍스트 */
+    --text-muted: #949ba4;       /* 보조 텍스트 */
+    --card-bg: #313338;          /* 카드 배경 */
+    --urgent: #f23f42;           /* 마감 임박 (Red) */
+    --tag-bg: rgba(88, 101, 242, 0.1);
+    --border-radius: 8px;
+    --transition: all 0.2s ease;
 }
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 body {
-    background-color: var(--bg-color);
-    background-image: 
-        radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.15) 0, transparent 50%),
-        radial-gradient(at 100% 100%, rgba(129, 140, 248, 0.15) 0, transparent 50%);
-    color: var(--text-primary);
-    min-height: 100vh;
-    padding: 2rem 1rem;
-    line-height: 1.6;
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    line-height: 1.5;
+    height: 100vh;
+    overflow: hidden;
 }
 
-.container {
-    max-width: 1000px;
-    margin: 0 auto;
+/* 레이아웃 구조 */
+.app-layout {
+    display: flex;
+    height: 100vh;
+    width: 100%;
 }
 
-header {
-    text-align: center;
-    margin-bottom: 3rem;
-    animation: fadeInDown 0.8s ease-out;
+/* 사이드바 */
+.sidebar {
+    width: 240px;
+    background-color: var(--bg-sidebar);
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-h1 {
-    font-size: 2.5rem;
+.sidebar-header {
+    padding: 20px;
     font-weight: 800;
-    background: linear-gradient(to right, var(--accent-blue), var(--accent-purple));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+    color: #fff;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.date-badge {
-    display: inline-block;
-    padding: 0.25rem 1rem;
-    background: var(--card-bg);
-    border: 1px solid var(--glass-border);
-    border-radius: 999px;
-    font-size: 0.875rem;
-    color: var(--accent-blue);
-    backdrop-filter: blur(8px);
+.sidebar-nav {
+    flex: 1;
+    padding: 12px;
+    overflow-y: auto;
 }
 
-.game-section {
-    margin-bottom: 4rem;
+.sidebar-item {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 4px;
+    border: none;
+    border-radius: 4px;
+    background: transparent;
+    color: var(--text-muted);
+    text-align: left;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
 }
 
-.game-title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin-bottom: 1.5rem;
-    padding-left: 1rem;
-    border-left: 4px solid var(--accent-blue);
+.sidebar-item:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #fff;
 }
 
-.event-grid {
+.sidebar-item.active {
+    background-color: var(--accent);
+    color: #fff;
+}
+
+.sidebar-footer {
+    padding: 15px;
+    background-color: rgba(0, 0, 0, 0.1);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* 메인 컨테이너 */
+.main-container {
+    flex: 1;
+    overflow-y: auto;
+    background-color: var(--bg-dark);
+    padding: 40px;
+}
+
+.section-game-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-bottom: 30px;
+    color: #fff;
+}
+
+/* 칸반 레이아웃 */
+.kanban-layout {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+    align-items: start;
+}
+
+.kanban-column {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    padding: 16px;
+    min-height: 200px;
+}
+
+.column-title {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 4px;
+}
+
+.column-title .count {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.8rem;
+}
+
+/* 이벤트 카드 */
+.column-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
 .event-card {
-    background: var(--card-bg);
-    border: 1px solid var(--glass-border);
-    border-radius: 1rem;
-    padding: 1.5rem;
-    backdrop-filter: blur(12px);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    display: flex;
-    flex-direction: column;
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    transition: var(--transition);
+    border: 1px solid transparent;
 }
 
 .event-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
-    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.1);
+    background-color: #383a40;
 }
 
-.event-card.expired {
-    opacity: 0.6;
-    filter: grayscale(0.5);
-}
-
-.event-card.expired .event-title {
-    text-decoration: line-through;
-}
-
-.urgent-tag {
-    background: var(--accent-red);
-    color: white;
-    font-size: 0.75rem;
-    font-weight: 700;
-    padding: 0.125rem 0.5rem;
-    border-radius: 4px;
-    display: inline-block;
-    margin-bottom: 0.75rem;
-    animation: pulse 2s infinite;
-}
-
-.event-title {
-    font-size: 1.125rem;
-    font-weight: 700;
-    margin-bottom: 0.75rem;
-    color: var(--text-primary);
-}
-
-.event-period {
-    font-size: 0.875rem;
-    color: var(--text-secondary);
-    margin-bottom: 1.5rem;
-    flex-grow: 1;
-}
-
-.event-actions {
+.card-header {
     display: flex;
-    gap: 0.75rem;
+    justify-content: flex-end;
+    margin-bottom: 8px;
 }
 
+.tag-urgent {
+    background-color: var(--urgent);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+}
+
+.card-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 8px;
+}
+
+.card-period {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+}
+
+.card-footer {
+    display: flex;
+    gap: 8px;
+}
+
+/* 버튼 스타일 */
 .btn {
     flex: 1;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.5rem;
-    border-radius: 0.5rem;
-    font-size: 0.8125rem;
-    font-weight: 600;
     text-decoration: none;
-    transition: all 0.2s;
+    text-align: center;
+    padding: 8px 0;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: var(--transition);
 }
 
 .btn-lounge {
-    background: rgba(255, 255, 255, 0.05);
-    color: var(--text-primary);
-    border: 1px solid var(--glass-border);
+    background-color: #4e5058;
+    color: #fff;
 }
 
 .btn-lounge:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background-color: #6d6f78;
 }
 
 .btn-web {
-    background: var(--accent-blue);
-    color: #0f172a;
+    background-color: var(--accent);
+    color: #fff;
 }
 
 .btn-web:hover {
-    opacity: 0.9;
+    background-color: #4752c4;
 }
 
-@keyframes fadeInDown {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
+/* 상태 메시지 */
+.empty-state {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 12px;
 }
 
-@keyframes pulse {
-    0% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.05); opacity: 0.8; }
-    100% { transform: scale(1); opacity: 1; }
+/* 스크롤바 커스텀 */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: #1a1b1e;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #111;
 }
 
-@media (max-width: 640px) {
-    h1 { font-size: 2rem; }
-    .event-grid { grid-template-columns: 1fr; }
+@media (max-width: 768px) {
+    .app-layout {
+        flex-direction: column;
+    }
+    .sidebar {
+        width: 100%;
+        height: auto;
+    }
+    .main-container {
+        padding: 20px;
+    }
 }
 </style>
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;800&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>GAME EVENT TRACKER</h1>
-            <div class="date-badge">Last Update: 2026-03-28 23:29</div>
-        </header>
-
-        <div id="dashboard">
-            
-            <div class="game-section">
-                <div class="game-title">명조: 워더링 웨이브</div>
-                <div class="event-grid">
-                <div class="event-card ">
-                    
-                    <div class="event-title">🌸 Galaxy S26 Ultra 명조:워더링 웨이브 치사 액세서리 에디션 상세 안내</div>
-                    <div class="event-period">상세 페이지 확인 필요</div>
-                    <div class="event-actions">
-                        <a href="https://game.naver.com/lounge/WutheringWaves/board/detail/7474442" target="_blank" class="btn btn-lounge">라운지</a>
-                        
-                    </div>
-                </div>
-                
-                <div class="event-card ">
-                    
-                    <div class="event-title">🎈 [명조 애니버서리] 코스프레 이벤트 참가자 모집</div>
-                    <div class="event-period">공지 내 모집 기간 확인 필요</div>
-                    <div class="event-actions">
-                        <a href="https://game.naver.com/lounge/WutheringWaves/board/detail/7470324" target="_blank" class="btn btn-lounge">라운지</a>
-                        
-                    </div>
-                </div>
-                
-                <div class="event-card ">
-                    
-                    <div class="event-title">🌸 Galaxy S26 Ultra 명조:워더링 웨이브 치사 액세서리 에디션 특별 영상 댓글 이벤트</div>
-                    <div class="event-period">공지 내 기간 확인 필요</div>
-                    <div class="event-actions">
-                        <a href="https://game.naver.com/lounge/WutheringWaves/board/detail/7474394" target="_blank" class="btn btn-lounge">라운지</a>
-                        
-                    </div>
-                </div>
-                
-                <div class="event-card ">
-                    
-                    <div class="event-title">🎨 팬아트 공모전 이벤트 '그림자 속에서 밝혀진 결심'</div>
-                    <div class="event-period">공지 내 기간 확인 필요</div>
-                    <div class="event-actions">
-                        <a href="https://game.naver.com/lounge/WutheringWaves/board/detail/7431846" target="_blank" class="btn btn-lounge">라운지</a>
-                        
-                    </div>
-                </div>
-                
-                <div class="event-card ">
-                    
-                    <div class="event-title">🎁 시그리카 캐릭터 트레일러 댓글 이벤트</div>
-                    <div class="event-period">공지 내 기간 확인 필요</div>
-                    <div class="event-actions">
-                        <a href="https://game.naver.com/lounge/WutheringWaves/board/detail/7422511" target="_blank" class="btn btn-lounge">라운지</a>
-                        
-                    </div>
-                </div>
-                
-                <div class="event-card expired">
-                    
-                    <div class="event-title">[종료] ✍ 퀴즈 이벤트 - 스타토치 아카데미의 학생</div>
-                    <div class="event-period">종료</div>
-                    <div class="event-actions">
-                        <a href="https://game.naver.com/lounge/WutheringWaves/board/detail/7440737" target="_blank" class="btn btn-lounge">라운지</a>
-                        
-                    </div>
-                </div>
-                
-                <div class="event-card expired">
-                    
-                    <div class="event-title">[종료] 🥤 [명조 X 컴포즈커피 2차 콜라보] 세미팝업 기념 커뮤니티 이벤트</div>
-                    <div class="event-period">종료</div>
-                    <div class="event-actions">
-                        <a href="https://game.naver.com/lounge/WutheringWaves/board/detail/7325270" target="_blank" class="btn btn-lounge">라운지</a>
-                        
-                    </div>
-                </div>
-                </div>
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">EVENT TRACKER</div>
+            <nav class="sidebar-nav">
+                <button class="sidebar-item active" onclick="switchGame('WutheringWaves', this)">명조: 워더링 웨이브</button><button class="sidebar-item " onclick="switchGame('ZZZ', this)">젠레스 존 제로</button><button class="sidebar-item " onclick="switchGame('Trickcal', this)">트릭컬: 리바이브</button>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="update-time">동기화 완료: 2026-03-29 00:43</div>
             </div>
-            
-            <div class="game-section">
-                <div class="game-title">젠레스 존 제로</div>
-                <div class="event-grid">
-                <div class="event-card ">
+        </aside>
+        
+        <main class="main-container">
+            <div id="WutheringWaves" class="game-content" style="display: block;"><h2 class="section-game-title">명조: 워더링 웨이브</h2><div class="kanban-layout">
+                <div class="kanban-column">
+                    <h3 class="column-title">인 게임 <span class="count">4</span></h3>
+                    <div class="column-grid">
+                    <div class="event-card">
+                        <div class="card-header">
+                            
+                        </div>
+                        <div class="card-title">「푸른 의지」 무기 이벤트 튜닝</div>
+                        <div class="card-period">3.2 버전 업데이트 후 ~ 정보 없음</div>
+                        <div class="card-footer">
+                            <a href="https://game.naver.com/lounge/WutheringWaves/board/detail/7426539" target="_blank" class="btn btn-lounge">공지 확인</a>
+                            
+                        </div>
+                    </div>
                     
-                    <div class="event-title">「펄펄 끓는 미식 탐방기」 이벤트</div>
-                    <div class="event-period">버전 내 한정 기간</div>
-                    <div class="event-actions">
-                        <a href="https://game.naver.com/lounge/ZZZ/board/detail/7451446" target="_blank" class="btn btn-lounge">라운지</a>
-                        
+                    <div class="event-card">
+                        <div class="card-header">
+                            
+                        </div>
+                        <div class="card-title">「솔스원의 해석」 무기 이벤트 튜닝</div>
+                        <div class="card-period">3.2 버전 업데이트 후 ~ 정보 없음</div>
+                        <div class="card-footer">
+                            <a href="https://game.naver.com/lounge/WutheringWaves/board/detail/7426491" target="_blank" class="btn btn-lounge">공지 확인</a>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="event-card">
+                        <div class="card-header">
+                            
+                        </div>
+                        <div class="card-title">[끝없는 여정 속 지친 검객] 캐릭터 이벤트 튜닝</div>
+                        <div class="card-period">3.2 버전 업데이트 후 ~ 정보 없음</div>
+                        <div class="card-footer">
+                            <a href="https://game.naver.com/lounge/WutheringWaves/board/detail/7426490" target="_blank" class="btn btn-lounge">공지 확인</a>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="event-card">
+                        <div class="card-header">
+                            
+                        </div>
+                        <div class="card-title">[룬이 반짝이는 찰나] 캐릭터 이벤트 튜닝</div>
+                        <div class="card-period">3.2 버전 업데이트 후 ~ 정보 없음</div>
+                        <div class="card-footer">
+                            <a href="https://game.naver.com/lounge/WutheringWaves/board/detail/7426453" target="_blank" class="btn btn-lounge">공지 확인</a>
+                            
+                        </div>
+                    </div>
                     </div>
                 </div>
                 
-                <div class="event-card ">
+                <div class="kanban-column">
+                    <h3 class="column-title">커뮤니티 <span class="count">5</span></h3>
+                    <div class="column-grid">
+                    <div class="event-card">
+                        <div class="card-header">
+                            
+                        </div>
+                        <div class="card-title">Galaxy S26 Ultra 명조:워더링 웨이브 치사 액세서리 에디션 특별 영상 댓글 이벤트</div>
+                        <div class="card-period">정보 없음</div>
+                        <div class="card-footer">
+                            <a href="https://game.naver.com/lounge/WutheringWaves/board/detail/7474394" target="_blank" class="btn btn-lounge">공지 확인</a>
+                            
+                        </div>
+                    </div>
                     
-                    <div class="event-title">「만점 카드 수집가」 이벤트</div>
-                    <div class="event-period">버전 내 한정 기간</div>
-                    <div class="event-actions">
-                        <a href="https://game.naver.com/lounge/ZZZ/board/detail/7408085" target="_blank" class="btn btn-lounge">라운지</a>
-                        
+                    <div class="event-card">
+                        <div class="card-header">
+                            
+                        </div>
+                        <div class="card-title">팬아트 공모전 이벤트 '그림자 속에서 밝혀진 결심'</div>
+                        <div class="card-period">정보 없음</div>
+                        <div class="card-footer">
+                            <a href="https://game.naver.com/lounge/WutheringWaves/board/detail/7431846" target="_blank" class="btn btn-lounge">공지 확인</a>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="event-card">
+                        <div class="card-header">
+                            
+                        </div>
+                        <div class="card-title">시그리카 캐릭터 트레일러 댓글 이벤트!</div>
+                        <div class="card-period">정보 없음</div>
+                        <div class="card-footer">
+                            <a href="https://game.naver.com/lounge/WutheringWaves/board/detail/7422511" target="_blank" class="btn btn-lounge">공지 확인</a>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="event-card">
+                        <div class="card-header">
+                            
+                        </div>
+                        <div class="card-title">Galaxy S26 Ultra 명조:워더링 웨이브 치사 액세서리 에디션 특별 애니메이션 댓글 이벤트</div>
+                        <div class="card-period">정보 없음</div>
+                        <div class="card-footer">
+                            <a href="https://game.naver.com/lounge/WutheringWaves/board/detail/7410464" target="_blank" class="btn btn-lounge">공지 확인</a>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="event-card">
+                        <div class="card-header">
+                            
+                        </div>
+                        <div class="card-title">[라하이 로이 퍼즐] 미니 이벤트</div>
+                        <div class="card-period">정보 없음</div>
+                        <div class="card-footer">
+                            <a href="https://game.naver.com/lounge/WutheringWaves/board/detail/7457363" target="_blank" class="btn btn-lounge">공지 확인</a>
+                            
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                </div></div><div id="ZZZ" class="game-content" style="display: none;"><h2 class="section-game-title">젠레스 존 제로</h2><div class="kanban-layout">
+                <div class="kanban-column">
+                    <h3 class="column-title">인 게임 <span class="count">3</span></h3>
+                    <div class="column-grid">
+                    <div class="event-card">
+                        <div class="card-header">
+                            
+                        </div>
+                        <div class="card-title">「펄펄 끓는 미식 탐방기」 이벤트</div>
+                        <div class="card-period">2.7 버전 업데이트 후 ~ 정보 없음</div>
+                        <div class="card-footer">
+                            <a href="https://game.naver.com/lounge/ZZZ/board/detail/7451446" target="_blank" class="btn btn-lounge">공지 확인</a>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="event-card">
+                        <div class="card-header">
+                            
+                        </div>
+                        <div class="card-title">2.7 버전 기간 한정 채널(상반기) 캐릭터/무기 모집</div>
+                        <div class="card-period">2.7 버전 업데이트 후 ~ 정보 없음</div>
+                        <div class="card-footer">
+                            <a href="https://game.naver.com/lounge/ZZZ/board/detail/7444053" target="_blank" class="btn btn-lounge">공지 확인</a>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="event-card">
+                        <div class="card-header">
+                            
+                        </div>
+                        <div class="card-title">「만점 카드 수집가」 이벤트</div>
+                        <div class="card-period">정보 없음</div>
+                        <div class="card-footer">
+                            <a href="https://game.naver.com/lounge/ZZZ/board/detail/7408085" target="_blank" class="btn btn-lounge">공지 확인</a>
+                            
+                        </div>
+                    </div>
                     </div>
                 </div>
                 
-                <div class="event-card ">
-                    
-                    <div class="event-title">🎁 [보상 이벤트] 부탁해요, 남궁 님!</div>
-                    <div class="event-period">공지 내 기간 확인 필요</div>
-                    <div class="event-actions">
-                        <a href="https://game.naver.com/lounge/ZZZ/board/detail/7455558" target="_blank" class="btn btn-lounge">라운지</a>
-                        
+                <div class="kanban-column">
+                    <h3 class="column-title">커뮤니티 <span class="count">1</span></h3>
+                    <div class="column-grid">
+                    <div class="event-card">
+                        <div class="card-header">
+                            
+                        </div>
+                        <div class="card-title">[보상 이벤트] 부탁해요, 남궁 님!</div>
+                        <div class="card-period">정보 없음</div>
+                        <div class="card-footer">
+                            <a href="https://game.naver.com/lounge/ZZZ/board/detail/7455558" target="_blank" class="btn btn-lounge">공지 확인</a>
+                            
+                        </div>
+                    </div>
                     </div>
                 </div>
-                </div>
-            </div>
-            
-            <div class="game-section">
-                <div class="game-title">트릭컬: 리바이브</div>
-                <div class="event-grid">
-                <div class="event-card ">
+                </div></div><div id="Trickcal" class="game-content" style="display: none;"><h2 class="section-game-title">트릭컬: 리바이브</h2><div class="kanban-layout">
+                <div class="kanban-column">
+                    <h3 class="column-title">인 게임 <span class="count">5</span></h3>
+                    <div class="column-grid">
+                    <div class="event-card">
+                        <div class="card-header">
+                            
+                        </div>
+                        <div class="card-title">2.5주년 기념 특별 상점 오픈</div>
+                        <div class="card-period">정보 없음 ~ 2026-04-23</div>
+                        <div class="card-footer">
+                            <a href="https://game.naver.com/lounge/Trickcal/board/detail/7452148" target="_blank" class="btn btn-lounge">공지 확인</a>
+                            
+                        </div>
+                    </div>
                     
-                    <div class="event-title">[커뮤니티] 에피드게임즈 공식 유튜브 구독 인증 이벤트</div>
-                    <div class="event-period">2026-03-27 ~ 2026-04-03</div>
-                    <div class="event-actions">
-                        <a href="https://game.naver.com/lounge/Trickcal/board/detail/7468389" target="_blank" class="btn btn-lounge">라운지</a>
-                        
+                    <div class="event-card">
+                        <div class="card-header">
+                            
+                        </div>
+                        <div class="card-title">2.5주년 기념 이달의 우수 복권 이벤트</div>
+                        <div class="card-period">정보 없음 ~ 2026-04-23</div>
+                        <div class="card-footer">
+                            <a href="https://game.naver.com/lounge/Trickcal/board/detail/7452147" target="_blank" class="btn btn-lounge">공지 확인</a>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="event-card">
+                        <div class="card-header">
+                            
+                        </div>
+                        <div class="card-title">2.5주년 기념 에르핀의 다과회 이벤트</div>
+                        <div class="card-period">정보 없음 ~ 2026-04-23</div>
+                        <div class="card-footer">
+                            <a href="https://game.naver.com/lounge/Trickcal/board/detail/7452146" target="_blank" class="btn btn-lounge">공지 확인</a>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="event-card">
+                        <div class="card-header">
+                            
+                        </div>
+                        <div class="card-title">2.5주년 기념 성격 선택 모집 이벤트 (가챠)</div>
+                        <div class="card-period">정보 없음 ~ 2026-04-23</div>
+                        <div class="card-footer">
+                            <a href="https://game.naver.com/lounge/Trickcal/board/detail/7452142" target="_blank" class="btn btn-lounge">공지 확인</a>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="event-card">
+                        <div class="card-header">
+                            
+                        </div>
+                        <div class="card-title">신규 스펙타클 카드 뽑기 이벤트</div>
+                        <div class="card-period">정보 없음 ~ 2026-04-09</div>
+                        <div class="card-footer">
+                            <a href="https://game.naver.com/lounge/Trickcal/board/detail/7452140" target="_blank" class="btn btn-lounge">공지 확인</a>
+                            
+                        </div>
+                    </div>
                     </div>
                 </div>
                 
-                <div class="event-card ">
-                    
-                    <div class="event-title">[이벤트] 2.5주년 기념 에르핀의 다과회 이벤트</div>
-                    <div class="event-period">2026-03-26 ~ 2026-04-23</div>
-                    <div class="event-actions">
-                        <a href="https://game.naver.com/lounge/Trickcal/board/detail/7452146" target="_blank" class="btn btn-lounge">라운지</a>
-                        
+                <div class="kanban-column">
+                    <h3 class="column-title">커뮤니티 <span class="count">1</span></h3>
+                    <div class="column-grid">
+                    <div class="event-card">
+                        <div class="card-header">
+                            
+                        </div>
+                        <div class="card-title">에피드게임즈 공식 유튜브 구독 인증 이벤트</div>
+                        <div class="card-period">2026-03-27 ~ 2026-04-03</div>
+                        <div class="card-footer">
+                            <a href="https://game.naver.com/lounge/Trickcal/board/detail/7468389" target="_blank" class="btn btn-lounge">공지 확인</a>
+                            
+                        </div>
+                    </div>
                     </div>
                 </div>
                 
-                <div class="event-card ">
-                    
-                    <div class="event-title">[이벤트] 2.5주년 기념 이달의 우수 복권 이벤트</div>
-                    <div class="event-period">2026-03-26 ~ 2026-04-23</div>
-                    <div class="event-actions">
-                        <a href="https://game.naver.com/lounge/Trickcal/board/detail/7452147" target="_blank" class="btn btn-lounge">라운지</a>
-                        
+                <div class="kanban-column">
+                    <h3 class="column-title">오프라인 <span class="count">1</span></h3>
+                    <div class="column-grid">
+                    <div class="event-card">
+                        <div class="card-header">
+                            
+                        </div>
+                        <div class="card-title">트릭컬 리바이브 × 현대백화점 스토어 콜라보 이벤트</div>
+                        <div class="card-period">정보 없음</div>
+                        <div class="card-footer">
+                            <a href="https://game.naver.com/lounge/Trickcal/board/detail/7452153" target="_blank" class="btn btn-lounge">공지 확인</a>
+                            
+                        </div>
+                    </div>
                     </div>
                 </div>
-                
-                <div class="event-card ">
-                    
-                    <div class="event-title">[이벤트] 트릭컬 리바이브 × 현대백화점 스토어 콜라보 이벤트</div>
-                    <div class="event-period">공지 내 기간 확인 필요</div>
-                    <div class="event-actions">
-                        <a href="https://game.naver.com/lounge/Trickcal/board/detail/7452153" target="_blank" class="btn btn-lounge">라운지</a>
-                        
-                    </div>
-                </div>
-                
-                <div class="event-card ">
-                    
-                    <div class="event-title">[이벤트] 신규 스펙타클 카드 뽑기</div>
-                    <div class="event-period">2026-03-26 ~ 2026-04-09</div>
-                    <div class="event-actions">
-                        <a href="https://game.naver.com/lounge/Trickcal/board/detail/7452140" target="_blank" class="btn btn-lounge">라운지</a>
-                        
-                    </div>
-                </div>
-                </div>
-            </div>
-            
-        </div>
+                </div></div>
+        </main>
     </div>
+
+    <script>
+        function switchGame(gameId, btn) {
+            document.querySelectorAll('.game-content').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+            document.getElementById(gameId).style.display = 'block';
+            btn.classList.add('active');
+        }
+    </script>
 </body>
 </html>
