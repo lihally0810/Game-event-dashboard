@@ -16,11 +16,11 @@ if GOOGLE_API_KEY:
 else:
     print("⚠️ GOOGLE_API_KEY가 설정되지 않았습니다. AI 분석이 불가능합니다.")
 
-# 게임별 라운지 및 게시판 정보
+# 게임별 라운지 및 게시판 정보 (사용자 지정 업데이트)
 LOUNGES = {
-    "WutheringWaves": {"name": "명조: 워더링 웨이브", "boards": [1, 3]},
-    "ZZZ": {"name": "젠레스 존 제로", "boards": [11, 13]},
-    "Trickcal": {"name": "트릭컬: 리바이브", "boards": [3, 13]}
+    "WutheringWaves": {"name": "명조: 워더링 웨이브", "boards": [3, 28]},
+    "ZZZ": {"name": "젠레스 존 제로", "boards": [13, 11]},
+    "Trickcal": {"name": "트릭컬: 리바이브", "boards": [13]}
 }
 
 def get_feeds(lounge_id, board_id):
@@ -87,22 +87,24 @@ def get_events_json(raw_data):
 ### 데이터:
 {json.dumps(raw_data, ensure_ascii=False)}
 
-### 🔍 추출 규칙:
+### 🔍 추출 및 필터링 규칙 (엄격 준수):
 1. **오늘 날짜**: {datetime.now().strftime('%Y-%m-%d')}
-2. **포함**: 기간 한정 이벤트, 웹 이벤트, 콜라보레이션.
-3. **제외**: 출석체크(로그인 보상), 상시/정규 이벤트, 업데이트 알림.
-4. **상태**: 3일 이내 마감이면 `is_urgent: true`, 종료되었으면 `is_expired: true`.
+2. **카테고리 분류**: '커뮤니티', '오프라인', '인 게임' 중 하나로 무조건 분류할 것.
+3. **포함**: 기간 한정 이벤트, 웹 이벤트, 콜라보레이션, **캐릭터/무기 뽑기(업데이트 소식 포함)**.
+4. **제외**: 단순 접속/출석체크(로그인 보상), 상시/정규 이벤트, **이미 종료된 이벤트**.
+5. **기간**: 기간(`period`)은 소식에서 찾아 무조건 작성할 것 (모르면 '정보 없음').
+6. **상태**: 오늘 기준 종료까지 3일 이내 마감이면 `is_urgent: true`.
 
-### ✍️ 출력 형식 (유효한 JSON 배열만 출력):
+### ✍️ 출력 형식 (반드시 유효한 JSON 배열만 출력):
 [
   {{
     "game": "게임명",
+    "category": "커뮤니티/오프라인/인 게임",
     "title": "이벤트 명",
-    "period": "시작일 ~ 종료일",
+    "period": "시작일 ~ 종료일 (또는 상시)",
     "lounge_link": "원본 게시글 링크",
     "web_link": "이벤트 참여 링크(없으면 null)",
-    "is_urgent": true/false,
-    "is_expired": true/false
+    "is_urgent": true/false
   }},
   ...
 ]
@@ -111,7 +113,6 @@ def get_events_json(raw_data):
         response = model.generate_content(prompt)
         res_text = response.text.strip()
         
-        # JSON 문자열 추출 (마크다운 코드 블록 제거)
         if res_text.startswith("```"):
             res_text = res_text.split("```")[1]
             if res_text.startswith("json"):
@@ -122,92 +123,116 @@ def get_events_json(raw_data):
         return events_list
     except Exception as e:
         print(f"❌ LLM 처리 중 오류: {e}")
-        if 'response' in locals() and hasattr(response, 'text'):
-            print(f"🔍 AI 원본 응답 요약: {response.text[:100]}...")
         return []
 
 def generate_html(events):
-    # CSS 읽기
     css_content = ""
     try:
         with open("style.css", "r", encoding="utf-8") as f:
             css_content = f.read()
     except:
-        print("⚠️ style.css를 찾을 수 없습니다.")
+        css_content = "/* CSS missing */"
 
-    # HTML 템플릿
+    # 데이터 그룹화: 게임 -> 카테고리
+    grouped = {}
+    for ev in events:
+        g = ev.get("game", "기타")
+        c = ev.get("category", "기타")
+        if g not in grouped: grouped[g] = {}
+        if c not in grouped[g]: grouped[g][c] = []
+        grouped[g][c].append(ev)
+
+    # 사이드바 아이템 및 메인 콘텐츠 생성
+    sidebar_html = ""
+    main_html = ""
+    
+    # 게임 순서 유지 (LOUNGES 순서대로)
+    for i, (lounge_key, info) in enumerate(LOUNGES.items()):
+        game_name = info["name"]
+        active_cls = "active" if i == 0 else ""
+        sidebar_html += f'<button class="sidebar-item {active_cls}" onclick="switchGame(\'{lounge_key}\', this)">{game_name}</button>'
+        
+        # 해당 게임의 이벤트 섹션
+        display_style = "display: block;" if i == 0 else "display: none;"
+        game_events = grouped.get(game_name, {})
+        
+        section_content = f'<h2 class="section-game-title">{game_name}</h2>'
+        if not game_events:
+            section_content += '<div class="empty-state">현재 진행 중인 이벤트가 없습니다.</div>'
+        else:
+            kanban_grid = ""
+            for category in ['인 게임', '커뮤니티', '오프라인']:
+                ev_list = game_events.get(category, [])
+                if not ev_list and category != '인 게임': continue # 인 게임은 비어있어도 컬럼 권장 (원하면 변경 가능)
+                
+                cards = ""
+                for ev in ev_list:
+                    urgent_tag = '<span class="tag-urgent">마감 임박</span>' if ev.get("is_urgent") else ""
+                    web_btn = f'<a href="{ev["web_link"]}" target="_blank" class="btn btn-web">참여 페이지</a>' if ev.get("web_link") else ""
+                    cards += f"""
+                    <div class="event-card">
+                        <div class="card-header">
+                            {urgent_tag}
+                        </div>
+                        <div class="card-title">{ev['title']}</div>
+                        <div class="card-period">{ev['period']}</div>
+                        <div class="card-footer">
+                            <a href="{ev['lounge_link']}" target="_blank" class="btn btn-lounge">공지 확인</a>
+                            {web_btn}
+                        </div>
+                    </div>
+                    """
+                kanban_grid += f"""
+                <div class="kanban-column">
+                    <h3 class="column-title">{category} <span class="count">{len(ev_list)}</span></h3>
+                    <div class="column-grid">{cards}</div>
+                </div>
+                """
+            section_content += f'<div class="kanban-layout">{kanban_grid}</div>'
+        
+        main_html += f'<div id="{lounge_key}" class="game-content" style="{display_style}">{section_content}</div>'
+
     html_template = f"""
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Event Tracker</title>
+    <title>Game Event Schedule</title>
     <style>{css_content}</style>
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;800&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>GAME EVENT TRACKER</h1>
-            <div class="date-badge">Last Update: {datetime.now().strftime('%Y-%m-%d %H:%M')}</div>
-        </header>
-
-        <div id="dashboard">
-            {{sections}}
-        </div>
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">EVENT TRACKER</div>
+            <nav class="sidebar-nav">
+                {sidebar_html}
+            </nav>
+            <div class="sidebar-footer">
+                <div class="update-time">동기화 완료: {datetime.now().strftime('%Y-%m-%d %H:%M')}</div>
+            </div>
+        </aside>
+        
+        <main class="main-container">
+            {main_html}
+        </main>
     </div>
+
+    <script>
+        function switchGame(gameId, btn) {{
+            document.querySelectorAll('.game-content').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+            document.getElementById(gameId).style.display = 'block';
+            btn.classList.add('active');
+        }}
+    </script>
 </body>
 </html>
 """
-    
-    # 게임별 섹션 생성
-    sections = ""
-    grouped_events = {}
-    for ev in events:
-        game_name = ev.get("game", "기타")
-        if game_name not in grouped_events:
-            grouped_events[game_name] = []
-        grouped_events[game_name].append(ev)
-
-    if not grouped_events:
-        sections = """
-        <div class="empty-state">
-            <p>현재 표시할 이벤트가 없습니다.</p>
-            <p><small>GitHub Secrets에 <b>GOOGLE_API_KEY</b>가 올바르게 등록되어 있는지 확인해 주세요.</small></p>
-        </div>
-        """
-    else:
-        for game, ev_list in grouped_events.items():
-            cards = ""
-            for ev in ev_list:
-                urgent_tag = '<div class="urgent-tag">⚠️ 마감 임박</div>' if ev.get("is_urgent") else ""
-                expired_cls = "expired" if ev.get("is_expired") else ""
-                web_btn = f'<a href="{ev["web_link"]}" target="_blank" class="btn btn-web">참여하기</a>' if ev.get("web_link") else ""
-                
-                cards += f"""
-                <div class="event-card {expired_cls}">
-                    {urgent_tag}
-                    <div class="event-title">{ev['title']}</div>
-                    <div class="event-period">{ev['period']}</div>
-                    <div class="event-actions">
-                        <a href="{ev['lounge_link']}" target="_blank" class="btn btn-lounge">라운지</a>
-                        {web_btn}
-                    </div>
-                </div>
-                """
-            
-            sections += f"""
-            <div class="game-section">
-                <div class="game-title">{game}</div>
-                <div class="event-grid">{cards}</div>
-            </div>
-            """
-
-    final_html = html_template.replace("{sections}", sections)
-    
     with open("index.html", "w", encoding="utf-8") as f:
-        f.write(final_html)
-    print("✨ index.html 생성 완료!")
+        f.write(html_template)
+    print("✨ index.html 개편 완료!")
 
 if __name__ == "__main__":
     print("🚀 데이터 수집 시작...")
@@ -216,8 +241,5 @@ if __name__ == "__main__":
     print("🤖 AI 분석 중 (JSON 변환)...")
     events = get_events_json(raw_data)
     
-    if not events:
-        print("ℹ️ 새로운 이벤트가 없습니다. 빈 대시보드를 생성합니다.")
-    
-    print(f"📦 {len(events)}개의 이벤트를 처리 중입니다. HTML을 생성합니다...")
+    print(f"📦 {{len(events)}}개의 이벤트를 처리 중입니다. HTML을 생성합니다...")
     generate_html(events)

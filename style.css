@@ -1,182 +1,261 @@
 :root {
-    --bg-color: #0f172a;
-    --card-bg: rgba(30, 41, 59, 0.7);
-    --text-primary: #f8fafc;
-    --text-secondary: #94a3b8;
-    --accent-blue: #38bdf8;
-    --accent-purple: #818cf8;
-    --accent-red: #fb7185;
-    --glass-border: rgba(255, 255, 255, 0.1);
+    --bg-dark: #1e1f22;          /* 디스코드 스타일 배경 */
+    --bg-sidebar: #2b2d31;       /* 사이드바 배경 */
+    --accent: #5865f2;           /* 포인트 컬러 (Blurple) */
+    --text-main: #dbdee1;        /* 메인 텍스트 */
+    --text-muted: #949ba4;       /* 보조 텍스트 */
+    --card-bg: #313338;          /* 카드 배경 */
+    --urgent: #f23f42;           /* 마감 임박 (Red) */
+    --tag-bg: rgba(88, 101, 242, 0.1);
+    --border-radius: 8px;
+    --transition: all 0.2s ease;
 }
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 body {
-    background-color: var(--bg-color);
-    background-image: 
-        radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.15) 0, transparent 50%),
-        radial-gradient(at 100% 100%, rgba(129, 140, 248, 0.15) 0, transparent 50%);
-    color: var(--text-primary);
-    min-height: 100vh;
-    padding: 2rem 1rem;
-    line-height: 1.6;
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    line-height: 1.5;
+    height: 100vh;
+    overflow: hidden;
 }
 
-.container {
-    max-width: 1000px;
-    margin: 0 auto;
+/* 레이아웃 구조 */
+.app-layout {
+    display: flex;
+    height: 100vh;
+    width: 100%;
 }
 
-header {
-    text-align: center;
-    margin-bottom: 3rem;
-    animation: fadeInDown 0.8s ease-out;
+/* 사이드바 */
+.sidebar {
+    width: 240px;
+    background-color: var(--bg-sidebar);
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-h1 {
-    font-size: 2.5rem;
+.sidebar-header {
+    padding: 20px;
     font-weight: 800;
-    background: linear-gradient(to right, var(--accent-blue), var(--accent-purple));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+    color: #fff;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.date-badge {
-    display: inline-block;
-    padding: 0.25rem 1rem;
-    background: var(--card-bg);
-    border: 1px solid var(--glass-border);
-    border-radius: 999px;
-    font-size: 0.875rem;
-    color: var(--accent-blue);
-    backdrop-filter: blur(8px);
+.sidebar-nav {
+    flex: 1;
+    padding: 12px;
+    overflow-y: auto;
 }
 
-.game-section {
-    margin-bottom: 4rem;
+.sidebar-item {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 4px;
+    border: none;
+    border-radius: 4px;
+    background: transparent;
+    color: var(--text-muted);
+    text-align: left;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
 }
 
-.game-title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin-bottom: 1.5rem;
-    padding-left: 1rem;
-    border-left: 4px solid var(--accent-blue);
+.sidebar-item:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #fff;
 }
 
-.event-grid {
+.sidebar-item.active {
+    background-color: var(--accent);
+    color: #fff;
+}
+
+.sidebar-footer {
+    padding: 15px;
+    background-color: rgba(0, 0, 0, 0.1);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* 메인 컨테이너 */
+.main-container {
+    flex: 1;
+    overflow-y: auto;
+    background-color: var(--bg-dark);
+    padding: 40px;
+}
+
+.section-game-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-bottom: 30px;
+    color: #fff;
+}
+
+/* 칸반 레이아웃 */
+.kanban-layout {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+    align-items: start;
+}
+
+.kanban-column {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    padding: 16px;
+    min-height: 200px;
+}
+
+.column-title {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 4px;
+}
+
+.column-title .count {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.8rem;
+}
+
+/* 이벤트 카드 */
+.column-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
 .event-card {
-    background: var(--card-bg);
-    border: 1px solid var(--glass-border);
-    border-radius: 1rem;
-    padding: 1.5rem;
-    backdrop-filter: blur(12px);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    display: flex;
-    flex-direction: column;
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    transition: var(--transition);
+    border: 1px solid transparent;
 }
 
 .event-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
-    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.1);
+    background-color: #383a40;
 }
 
-.event-card.expired {
-    opacity: 0.6;
-    filter: grayscale(0.5);
-}
-
-.event-card.expired .event-title {
-    text-decoration: line-through;
-}
-
-.urgent-tag {
-    background: var(--accent-red);
-    color: white;
-    font-size: 0.75rem;
-    font-weight: 700;
-    padding: 0.125rem 0.5rem;
-    border-radius: 4px;
-    display: inline-block;
-    margin-bottom: 0.75rem;
-    animation: pulse 2s infinite;
-}
-
-.event-title {
-    font-size: 1.125rem;
-    font-weight: 700;
-    margin-bottom: 0.75rem;
-    color: var(--text-primary);
-}
-
-.event-period {
-    font-size: 0.875rem;
-    color: var(--text-secondary);
-    margin-bottom: 1.5rem;
-    flex-grow: 1;
-}
-
-.event-actions {
+.card-header {
     display: flex;
-    gap: 0.75rem;
+    justify-content: flex-end;
+    margin-bottom: 8px;
 }
 
+.tag-urgent {
+    background-color: var(--urgent);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+}
+
+.card-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 8px;
+}
+
+.card-period {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+}
+
+.card-footer {
+    display: flex;
+    gap: 8px;
+}
+
+/* 버튼 스타일 */
 .btn {
     flex: 1;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.5rem;
-    border-radius: 0.5rem;
-    font-size: 0.8125rem;
-    font-weight: 600;
     text-decoration: none;
-    transition: all 0.2s;
+    text-align: center;
+    padding: 8px 0;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: var(--transition);
 }
 
 .btn-lounge {
-    background: rgba(255, 255, 255, 0.05);
-    color: var(--text-primary);
-    border: 1px solid var(--glass-border);
+    background-color: #4e5058;
+    color: #fff;
 }
 
 .btn-lounge:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background-color: #6d6f78;
 }
 
 .btn-web {
-    background: var(--accent-blue);
-    color: #0f172a;
+    background-color: var(--accent);
+    color: #fff;
 }
 
 .btn-web:hover {
-    opacity: 0.9;
+    background-color: #4752c4;
 }
 
-@keyframes fadeInDown {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
+/* 상태 메시지 */
+.empty-state {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 12px;
 }
 
-@keyframes pulse {
-    0% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.05); opacity: 0.8; }
-    100% { transform: scale(1); opacity: 1; }
+/* 스크롤바 커스텀 */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: #1a1b1e;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #111;
 }
 
-@media (max-width: 640px) {
-    h1 { font-size: 2rem; }
-    .event-grid { grid-template-columns: 1fr; }
+@media (max-width: 768px) {
+    .app-layout {
+        flex-direction: column;
+    }
+    .sidebar {
+        width: 100%;
+        height: auto;
+    }
+    .main-container {
+        padding: 20px;
+    }
 }
