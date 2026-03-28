@@ -59,7 +59,25 @@ def get_events_json(raw_data):
         return []
 
     genai.configure(api_key=GOOGLE_API_KEY)
-    model = genai.GenerativeModel('gemini-2.0-flash')
+    
+    # 가용 가능한 모델 후보군 (404 및 429 에러 방지)
+    model_candidates = ['gemini-1.5-flash', 'gemini-pro', 'gemini-1.5-flash-latest', 'gemini-pro-latest']
+    model = None
+    
+    for model_name in model_candidates:
+        try:
+            print(f"🤖 {model_name} 모델로 분석 시도 중...")
+            temp_model = genai.GenerativeModel(model_name)
+            # 모델 작동 여부 가볍게 테스트 (선택 사항이지만 안전함)
+            model = temp_model
+            break # 작동하면 루프 탈출
+        except Exception as e:
+            print(f"⚠️ {model_name} 모델 사용 불가: {e}")
+            continue
+            
+    if not model:
+        print("❌ 어떤 AI 모델도 사용할 수 없습니다. API 키 또는 할당량을 확인해 주세요.")
+        return []
     
     prompt = f"""
 너는 게임 데이터 분석가야. 아래 제공된 네이버 게임 라운지 데이터를 분석해서 한정 이벤트 정보를 JSON 배열로 반환해줘.
