@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import json
 import os
 import time
+import traceback
 from datetime import datetime
 import google.generativeai as genai
 from dotenv import load_dotenv
@@ -35,11 +36,12 @@ LOUNGES = {
 }
 
 def get_full_text(url):
-    """게시글 상세 페이지 방문하여 본문 전체 텍스트 수집 (안전성 강화)"""
+    """게시글 상세 페이지 방문하여 본문 전체 텍스트 수집 (정밀 스캔)"""
     try:
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'}
-        res = requests.get(url, headers=headers, timeout=15)
+        res = requests.get(url, headers=headers, timeout=20) # 타임아웃 넉넉히 상향
         if res.status_code != 200:
+            print(f"⚠️ {url} 접속 실패 (Status: {res.status_code})")
             return ""
         soup = BeautifulSoup(res.text, 'html.parser')
         
@@ -48,16 +50,18 @@ def get_full_text(url):
         if content_area:
             return content_area.get_text("\n", strip=True)
         return ""
-    except Exception as e:
-        print(f"⚠️ 본문 수집 실패 안내 ({url}): {e}")
+    except Exception:
+        print(f"⚠️ {url} 본문 수집 실패")
+        traceback.print_exc()
         return ""
 
 def collect_game_data(lounge_id, info):
-    """각 게임별로 15개의 최신글에 대해 본문 전체를 딥 스크래핑합니다 (딜레이 추가)"""
+    """각 게임별로 10개의 최신글에 대해 본문 전체를 딥 스크래핑합니다 (하향 조정)"""
     all_game_feeds = []
     for board in info["boards"]:
         board_id = board["id"]
-        url = f"https://game-api.naver.com/game/v1/lounge/{lounge_id}/feed?boardId={board_id}&page=1&pageSize=15"
+        # 사용자 요청에 따라 pageSize를 10으로 하향 조정하여 부하 감소
+        url = f"https://game-api.naver.com/game/v1/lounge/{lounge_id}/feed?boardId={board_id}&page=1&pageSize=10"
         try:
             res = requests.get(url, timeout=12)
             if res.status_code != 200: continue
@@ -77,9 +81,10 @@ def collect_game_data(lounge_id, info):
                     "link": link,
                     "full_text": full_text
                 })
-                time.sleep(0.3) # 네이버 서버 부하 방지 및 차단 회피
-        except Exception as e:
-            print(f"❌ {info['name']} 게시판({board_id}) 수집 오류: {e}")
+                time.sleep(0.5) # 딜레이 약간 더 상향 (0.3 -> 0.5)
+        except Exception:
+            print(f"❌ {info['name']} (Board {board_id}) 수집 오류")
+            traceback.print_exc()
     return all_game_feeds
 
 def analyze_game_events(game_name, raw_data, ai_model):
@@ -96,12 +101,10 @@ def analyze_game_events(game_name, raw_data, ai_model):
 ### 🔍 초정밀 추출 규칙:
 1. **오늘 날짜**: {datetime.now().strftime('%Y-%m-%d')}
 2. **카테고리 분류**: '커뮤니티', '오프라인', '인 게임' 중 하나로 분류.
-   - **캐릭터/무기 모집(뽑기, 튜닝), 버전 소식, 인게임 미니게임/퍼즐**은 반드시 **'인 게임'**으로 분류.
-3. **날짜 강제 추출 (핵심)**: 
-   - '진행 중' 또는 '상시', '정보 없음' 표현 사용 절대 금지.
-   - 본문의 `일시`, `공간`, `~`, `/`, `AM/PM` 등을 샅샅이 뒤져 **정확한 시작일/종료일과 시각**을 찾아낼 것.
-   - 형식: "3월 29일 11:00 ~ 4월 17일 03:59"
-4. **포함/제외**: 기간 한정 이벤트, 캐릭터 모집은 포함하고 단순 출석 보상은 제외. 이미 종료된 이벤트는 무조건 삭제.
+   - **캐릭터/무기 모집(뽑기, 튜닝), 미니게임, 퍼즐**은 반드시 **'인 게임'**으로 분류.
+3. **날짜 강제 추출 (핵심)**: '진행 중' 또는 '상시', '정보 없음' 표현 절대 금지. 본문에서 시각 정보를 뒤져 **정확한 시작일/종료일과 시각**을 찾아낼 것.
+   - 형식: "X월 X일 00:00 ~ X월 X일 00:00" (예: 3월 29일 11:00 ~ 4월 17일 03:59)
+4. **제외**: 접속 보상(출석), 이미 종료된 이벤트는 무조건 삭제.
 5. **상태**: 오늘 기준 종료까지 3일 이내 마감이면 `is_urgent: true`.
 
 ### ✍️ 출력 형식 (유효한 JSON 배열만 출력):
@@ -121,18 +124,25 @@ def analyze_game_events(game_name, raw_data, ai_model):
         response = ai_model.generate_content(prompt)
         res_text = response.text.strip()
         
-        # JSON 정제 로직 강화
+        # JSON 정제 로직 더욱 강화
         if "```" in res_text:
             res_text = res_text.split("```")[1]
             if res_text.lower().startswith("json"):
                 res_text = res_text[4:]
         
         res_text = res_text.strip()
-        events = json.loads(res_text)
-        print(f"🤖 {game_name} 분석 완료: {len(events)}개 추출")
-        return events
-    except Exception as e:
-        print(f"❌ {game_name} AI 분석 오류: {e}")
+        try:
+            events = json.loads(res_text)
+            print(f"🤖 {game_name} 분석 완료: {len(events)}개 추출")
+            return events
+        except json.JSONDecodeError:
+            print(f"❌ {game_name} AI 응답 파싱 실패")
+            print(f"📝 AI Original Output: {res_text}") # 디버깅용 로그 남김
+            return []
+            
+    except Exception:
+        print(f"❌ {game_name} AI 분석 중 시스템 오류")
+        traceback.print_exc()
         return []
 
 def generate_html(events):
@@ -172,7 +182,7 @@ def generate_html(events):
                 cards = ""
                 for ev in ev_list:
                     urgent_tag = '<span class="tag-urgent">마감 임박</span>' if ev.get("is_urgent") else ""
-                    web_btn = f'<a href="{ev["web_link"]}" target="_blank" class="btn btn-web">참여 페이지</a>' if ev.get("web_link") else ""
+                    web_btn = f'<a href="{ev.get("web_link")}" target="_blank" class="btn btn-web">참여 페이지</a>' if ev.get("web_link") else ""
                     cards += f"""
                     <div class="event-card">
                         <div class="card-header">{urgent_tag}</div>
@@ -238,7 +248,7 @@ if __name__ == "__main__":
     try:
         genai.configure(api_key=GOOGLE_API_KEY)
         
-        # 모델 선택 로직 안정화
+        # 모델 선택 로직 (초정밀 분석 유지)
         model = None
         for m_name in ['gemini-2.0-flash', 'gemini-pro-latest', 'gemini-flash-latest']:
             try:
@@ -255,7 +265,7 @@ if __name__ == "__main__":
 
         final_all_events = []
         for lounge_id, info in LOUNGES.items():
-            print(f"🚀 {info['name']} 정밀 데이터 수집 중...")
+            print(f"🚀 {info['name']} 정밀 데이터 수집 중 (사이즈 10)...")
             raw_data = collect_game_data(lounge_id, info)
             
             if raw_data:
@@ -269,5 +279,6 @@ if __name__ == "__main__":
         print("✨ 모든 데이터 동기화 완료!")
         
     except Exception as e:
-        print(f"‼️ 메인 루프 실행 중 치명적 오류: {e}")
+        print(f"‼️ 메인 루프 실행 중 치명적 오류")
+        traceback.print_exc()
         exit(1)
