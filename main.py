@@ -45,7 +45,7 @@ def collect_all_data():
                     "game": info["name"],
                     "title": feed["feed"]["title"],
                     "link": f"https://game.naver.com/lounge/{lounge_id}/board/detail/{feed['feed']['feedId']}",
-                    "content_preview": feed["feed"].get("contents", "")[:500]
+                    "content_preview": feed["feed"].get("contents", "")[:1500]
                 }
                 game_feeds.append(feed_data)
         print(f"📡 {info['name']}에서 {len(game_feeds)}개의 소식을 가져왔습니다.")
@@ -89,10 +89,10 @@ def get_events_json(raw_data):
 
 ### 🔍 추출 및 필터링 규칙 (엄격 준수):
 1. **오늘 날짜**: {datetime.now().strftime('%Y-%m-%d')}
-2. **카테고리 분류**: '커뮤니티', '오프라인', '인 게임' 중 하나로 무조건 분류할 것.
-3. **포함**: 기간 한정 이벤트, 웹 이벤트, 콜라보레이션, **캐릭터/무기 뽑기(업데이트 소식 포함)**.
-4. **제외**: 단순 접속/출석체크(로그인 보상), 상시/정규 이벤트, **이미 종료된 이벤트**.
-5. **기간**: 기간(`period`)은 소식에서 찾아 무조건 작성할 것 (모르면 '정보 없음').
+2. **카테고리 분류**: '커뮤니티', '오프라인', '인 게임' 중 하나로 분류. 특히 **캐릭터/무기 모집(뽑기), 인게임 미니게임/퍼즐**은 무조건 **'인 게임'**으로 분류할 것.
+3. **포함**: 기간 한정 이벤트, 웹 이벤트, 콜라보레이션, 캐릭터/무기 모집.
+4. **제외**: 단순 접속/출석체크(로그인 보상), 상시/정규 이벤트, **이미 종료된 이벤트(종료일이 오늘보다 이전이면 무조건 삭제)**.
+5. **날짜 형식**: 기간(`period`)은 본문에서 찾아 **'3월 29일 ~ 4월 15일'** 또는 **'3월 29일 (상시)'** 형식으로 작성할 것. '정보 없음' 대신 본문 내의 기간 관련 문구를 최대한 활용할 것.
 6. **상태**: 오늘 기준 종료까지 3일 이내 마감이면 `is_urgent: true`.
 
 ### ✍️ 출력 형식 (반드시 유효한 JSON 배열만 출력):
@@ -101,7 +101,7 @@ def get_events_json(raw_data):
     "game": "게임명",
     "category": "커뮤니티/오프라인/인 게임",
     "title": "이벤트 명",
-    "period": "시작일 ~ 종료일 (또는 상시)",
+    "period": "X월 X일 ~ X월 X일 (또는 상시)",
     "lounge_link": "원본 게시글 링크",
     "web_link": "이벤트 참여 링크(없으면 null)",
     "is_urgent": true/false
