@@ -175,8 +175,8 @@ if __name__ == "__main__":
     print("🤖 AI 분석 중 (JSON 변환)...")
     events = get_events_json(raw_data)
     
-    if events:
-        print(f"📦 {len(events)}개의 이벤트를 찾았습니다. HTML을 생성합니다...")
-        generate_html(events)
-    else:
-        print("❌ 추출된 이벤트가 없습니다.")
+    if not events:
+        print("ℹ️ 새로운 이벤트가 없습니다. 빈 대시보드를 생성합니다.")
+    
+    print(f"📦 {len(events)}개의 이벤트를 처리 중입니다. HTML을 생성합니다...")
+    generate_html(events)

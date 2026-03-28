@@ -38,5 +38,5 @@ jobs:
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git add index.html
-        git commit -m "Auto-update: Game Events $(date +%Y-%m-%d)" || echo "No changes to commit"
-        git push
+        git commit -m "Auto-update: Game Events $(date +%Y-%m-%d %H:%M)" --allow-empty
+        git push origin main
