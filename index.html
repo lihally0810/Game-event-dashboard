@@ -4,18 +4,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Event Schedule</title>
+    <title>Game Event Dashboard</title>
     <style>:root {
-    --bg-dark: #1e1f22;          /* 디스코드 스타일 배경 */
-    --bg-sidebar: #2b2d31;       /* 사이드바 배경 */
+    --bg-dark: #0a0b0d;          /* 더 깊은 어두운 배경 */
+    --bg-sidebar: #121317;       /* 사이드바 배경 */
     --accent: #5865f2;           /* 포인트 컬러 (Blurple) */
-    --text-main: #dbdee1;        /* 메인 텍스트 */
+    --accent-glow: rgba(88, 101, 242, 0.3);
+    --text-main: #f2f3f5;        /* 메인 텍스트 */
     --text-muted: #949ba4;       /* 보조 텍스트 */
-    --card-bg: #313338;          /* 카드 배경 */
+    --card-bg: rgba(30, 31, 34, 0.6); /* Glassmorphism 배경 */
     --urgent: #f23f42;           /* 마감 임박 (Red) */
-    --tag-bg: rgba(88, 101, 242, 0.1);
-    --border-radius: 8px;
-    --transition: all 0.2s ease;
+    --border: rgba(255, 255, 255, 0.08);
+    --border-radius: 12px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 * {
@@ -25,10 +26,10 @@
 }
 
 body {
-    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
     background-color: var(--bg-dark);
     color: var(--text-main);
-    line-height: 1.5;
+    line-height: 1.6;
     height: 100vh;
     overflow: hidden;
 }
@@ -42,34 +43,45 @@ body {
 
 /* 사이드바 */
 .sidebar {
-    width: 240px;
+    width: 260px;
     background-color: var(--bg-sidebar);
     display: flex;
     flex-direction: column;
-    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    border-right: 1px solid var(--border);
+    z-index: 10;
 }
 
 .sidebar-header {
-    padding: 20px;
+    padding: 30px 24px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
     font-weight: 800;
-    font-size: 1.2rem;
-    letter-spacing: 1px;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
     color: #fff;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.logo svg {
+    color: var(--accent);
+    filter: drop-shadow(0 0 8px var(--accent-glow));
 }
 
 .sidebar-nav {
     flex: 1;
-    padding: 12px;
+    padding: 0 16px;
     overflow-y: auto;
 }
 
 .sidebar-item {
     width: 100%;
-    padding: 10px 12px;
-    margin-bottom: 4px;
+    padding: 12px 16px;
+    margin-bottom: 6px;
     border: none;
-    border-radius: 4px;
+    border-radius: 8px;
     background: transparent;
     color: var(--text-muted);
     text-align: left;
@@ -77,6 +89,8 @@ body {
     font-weight: 600;
     cursor: pointer;
     transition: var(--transition);
+    display: flex;
+    align-items: center;
 }
 
 .sidebar-item:hover {
@@ -87,50 +101,105 @@ body {
 .sidebar-item.active {
     background-color: var(--accent);
     color: #fff;
+    box-shadow: 0 4px 15px var(--accent-glow);
 }
 
 .sidebar-footer {
-    padding: 15px;
-    background-color: rgba(0, 0, 0, 0.1);
+    padding: 20px 24px;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.update-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     font-size: 0.75rem;
     color: var(--text-muted);
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #23a55a;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #23a55a;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.2); }
+    100% { opacity: 1; transform: scale(1); }
 }
 
 /* 메인 컨테이너 */
 .main-container {
     flex: 1;
     overflow-y: auto;
-    background-color: var(--bg-dark);
-    padding: 40px;
+    background: radial-gradient(circle at top right, rgba(88, 101, 242, 0.05), transparent 40%),
+                radial-gradient(circle at bottom left, rgba(242, 63, 66, 0.03), transparent 30%);
+    padding: 60px 40px;
+    scroll-behavior: smooth;
+}
+
+.container-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.header-group {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 40px;
 }
 
 .section-game-title {
-    font-size: 1.8rem;
+    font-size: 2.2rem;
     font-weight: 800;
-    margin-bottom: 30px;
     color: #fff;
+    background: linear-gradient(to right, #fff, #949ba4);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.live-indicator {
+    padding: 4px 10px;
+    background: rgba(35, 165, 90, 0.1);
+    color: #23a55a;
+    font-size: 0.7rem;
+    font-weight: 800;
+    border-radius: 20px;
+    border: 1px solid rgba(35, 165, 90, 0.2);
+}
+
+/* 애니메이션용 설정 */
+.game-content {
+    transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 /* 칸반 레이아웃 */
 .kanban-layout {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 24px;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 30px;
     align-items: start;
 }
 
 .kanban-column {
-    background-color: rgba(0, 0, 0, 0.2);
-    border-radius: 12px;
-    padding: 16px;
-    min-height: 200px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 16px;
+    padding: 20px;
+    border: 1px solid var(--border);
 }
 
 .column-title {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     text-transform: uppercase;
+    letter-spacing: 1px;
     color: var(--text-muted);
-    margin-bottom: 16px;
+    margin-bottom: 24px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -138,43 +207,61 @@ body {
 }
 
 .column-title .count {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 2px 8px;
-    border-radius: 10px;
-    font-size: 0.8rem;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    color: #fff;
 }
 
-/* 이벤트 카드 */
+/* 이벤트 카드 (Glassmorphism) */
 .column-grid {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
 }
 
 .event-card {
-    background-color: var(--card-bg);
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     border-radius: var(--border-radius);
-    padding: 20px;
-    padding-top: 32px; /* 태그 공간 확보 */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    padding: 24px;
+    border: 1px solid var(--border);
     transition: var(--transition);
-    border: 1px solid transparent;
-    position: relative; /* 태그 고정용 */
-    display: flex;
-    flex-direction: column;
-    height: 100%; /* 카드 높이 통일 */
+    cursor: default; /* 카드 자체는 클릭 불가 */
+    position: relative;
+    overflow: hidden;
+}
+
+.event-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none; /* 배경 효과가 클릭을 방해하지 않도록 설정 */
+    z-index: 1;
 }
 
 .event-card:hover {
-    transform: translateY(-4px);
-    border-color: rgba(255, 255, 255, 0.1);
-    background-color: #383a40;
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.event-card:hover::before {
+    opacity: 1;
+}
+
+.card-header, .card-body, .card-footer {
+    position: relative;
+    z-index: 2; /* 배경보다 위로 올림 */
 }
 
 .card-header {
-    position: absolute;
-    top: 12px;
-    right: 12px;
+    margin-bottom: 12px;
+    height: 20px;
 }
 
 .tag-urgent {
@@ -184,47 +271,49 @@ body {
     font-weight: 800;
     padding: 3px 8px;
     border-radius: 4px;
-    text-transform: uppercase;
-    box-shadow: 0 0 10px rgba(242, 63, 66, 0.4);
+    box-shadow: 0 0 15px rgba(242, 63, 66, 0.4);
 }
 
 .card-title {
-    font-size: 1.05rem;
+    font-size: 1.15rem;
     font-weight: 700;
     color: #fff;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
 }
 
 .card-period {
     font-size: 0.85rem;
     color: var(--text-muted);
-    margin-bottom: 16px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
 .card-footer {
     display: flex;
-    gap: 8px;
+    gap: 10px;
 }
 
-/* 버튼 스타일 */
-.btn {
+.btn-lounge, .btn-web {
     flex: 1;
-    text-decoration: none;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 700;
     text-align: center;
-    padding: 8px 0;
-    border-radius: 4px;
-    font-size: 0.85rem;
-    font-weight: 600;
+    text-decoration: none;
     transition: var(--transition);
 }
 
 .btn-lounge {
-    background-color: #4e5058;
+    background-color: rgba(255, 255, 255, 0.05);
     color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .btn-lounge:hover {
-    background-color: #6d6f78;
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 .btn-web {
@@ -234,63 +323,428 @@ body {
 
 .btn-web:hover {
     background-color: #4752c4;
+    box-shadow: 0 0 15px var(--accent-glow);
 }
 
 /* 상태 메시지 */
 .empty-state {
     text-align: center;
-    padding: 40px;
+    padding: 60px;
     color: var(--text-muted);
-    background: rgba(255, 255, 255, 0.02);
-    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.01);
+    border-radius: 16px;
+    border: 1px dashed var(--border);
+    font-size: 1.1rem;
 }
 
-/* 스크롤바 커스텀 */
-::-webkit-scrollbar {
-    width: 8px;
-}
-::-webkit-scrollbar-track {
-    background: transparent;
-}
-::-webkit-scrollbar-thumb {
-    background: #1a1b1e;
-    border-radius: 10px;
-}
-::-webkit-scrollbar-thumb:hover {
-    background: #111;
+/* 스크롤바 */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+/* 쿠폰 스타일 */
+.coupon-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
 }
 
-@media (max-width: 768px) {
-    .app-layout {
-        flex-direction: column;
-    }
-    .sidebar {
-        width: 100%;
-        height: auto;
-    }
-    .main-container {
-        padding: 20px;
-    }
+.coupon-code {
+    background: rgba(88, 101, 242, 0.1);
+    border: 1px dashed var(--accent);
+    color: var(--accent);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', 'Consolas', monospace;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.coupon-code:hover {
+    background: var(--accent);
+    color: #fff;
+    transform: scale(1.05);
+}
+
+.coupon-code.copied {
+    border-color: #23a55a;
+    background-color: #23a55a;
+    color: #fff;
+}
+
+/* 토스트 알림 */
+.toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--accent);
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-weight: 700;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+@media (max-width: 900px) {
+    .app-layout { flex-direction: column; }
+    .sidebar { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
+    .main-container { padding: 30px 20px; }
+    .kanban-layout { grid-template-columns: 1fr; }
 }
 </style>
     <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <div class="app-layout">
         <aside class="sidebar">
-            <div class="sidebar-header">EVENT TRACKER</div>
-            <nav class="sidebar-nav"><button class="sidebar-item active" onclick="switchGame('WutheringWaves', this)">명조: 워더링 웨이브</button><button class="sidebar-item " onclick="switchGame('ZZZ', this)">젠레스 존 제로</button><button class="sidebar-item " onclick="switchGame('Trickcal', this)">트릭컬: 리바이브</button></nav>
+            <div class="sidebar-header">
+                <div class="logo">
+                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L2 7V17L12 22L22 17V7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>EVENT TRACKER</span>
+                </div>
+            </div>
+            <nav class="sidebar-nav"><button class="sidebar-item active" onclick="switchGame('game_0', this)">명조</button><button class="sidebar-item " onclick="switchGame('game_1', this)">젠레스 존 제로</button><button class="sidebar-item " onclick="switchGame('game_2', this)">트릭컬 리바이브</button></nav>
             <div class="sidebar-footer">
-                <div class="update-time">동기화 완료: 2026-04-19 15:18</div>
+                <div class="update-info">
+                    <div class="status-dot"></div>
+                    <span>동기화 완료: 04/19 22:33</span>
+                </div>
             </div>
         </aside>
-        <main class="main-container"><div id="WutheringWaves" class="game-content" style="display: block;"><h2 class="section-game-title">명조: 워더링 웨이브</h2><div class="empty-state">현재 진행 중인 이벤트가 없습니다.</div></div><div id="ZZZ" class="game-content" style="display: none;"><h2 class="section-game-title">젠레스 존 제로</h2><div class="empty-state">현재 진행 중인 이벤트가 없습니다.</div></div><div id="Trickcal" class="game-content" style="display: none;"><h2 class="section-game-title">트릭컬: 리바이브</h2><div class="empty-state">현재 진행 중인 이벤트가 없습니다.</div></div></main>
+        <main class="main-container">
+            <div class="container-inner">
+                <div id="game_0" class="game-content" style="display: block;"><div class="header-group"><h2 class="section-game-title">명조</h2><span class="live-indicator">LIVE</span></div><div class="kanban-layout">
+            <div class="kanban-column">
+                <h3 class="column-title">인 게임 <span class="count">4</span></h3>
+                <div class="column-grid">
+                <div class="event-card">
+                    <div class="card-header"></div>
+                    <div class="card-body">
+                        <div class="card-title">[리듬을 따라 출항] 음악 도전 이벤트</div>
+                        <div class="card-period"><i class="far fa-clock"></i> 03.02(월) 23:59 ~ 04.29(수) 12:59</div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="https://game.naver.com/lounge/WutheringWaves/board/detail/7430386" target="_blank" class="btn-lounge">공지 확인</a>
+                        
+                    </div>
+                </div>
+                
+                <div class="event-card">
+                    <div class="card-header"><span class="tag-urgent">D-1</span></div>
+                    <div class="card-body">
+                        <div class="card-title">[초고효율! 학생 식당 보완 계획!] 미니 이벤트</div>
+                        <div class="card-period"><i class="far fa-clock"></i> 04.02(목) 05:00 ~ 04.20(월) 04:59</div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="https://game.naver.com/lounge/WutheringWaves/board/detail/7490653" target="_blank" class="btn-lounge">공지 확인</a>
+                        
+                    </div>
+                </div>
+                
+                <div class="event-card">
+                    <div class="card-header"></div>
+                    <div class="card-body">
+                        <div class="card-title">[황야의 기사] 기간 한정 도전 이벤트</div>
+                        <div class="card-period"><i class="far fa-clock"></i> 04.09(목) 11:00 ~ 04.29(수) 04:59</div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="https://game.naver.com/lounge/WutheringWaves/board/detail/7430386" target="_blank" class="btn-lounge">공지 확인</a>
+                        
+                    </div>
+                </div>
+                
+                <div class="event-card">
+                    <div class="card-header"></div>
+                    <div class="card-body">
+                        <div class="card-title">[기억 속 진홍빛 그림자] 사전 테마 이벤트</div>
+                        <div class="card-period"><i class="far fa-clock"></i> 04.16(목) 05:00 ~ 04.29(수) 04:59</div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="https://game.naver.com/lounge/WutheringWaves/board/detail/7539277" target="_blank" class="btn-lounge">공지 확인</a>
+                        
+                    </div>
+                </div>
+                </div>
+            </div>
+            
+            <div class="kanban-column">
+                <h3 class="column-title">쿠폰 <span class="count">1</span></h3>
+                <div class="column-grid">
+                <div class="event-card">
+                    <div class="card-header"><span class="tag-urgent">D-1</span></div>
+                    <div class="card-body">
+                        <div class="coupon-group"><span class="coupon-code" onclick="copyToClipboard('FACEALEPH1', this)">FACEALEPH1 <i class="far fa-copy"></i></span><span class="coupon-code" onclick="copyToClipboard('2NDANNIVERSARY', this)">2NDANNIVERSARY <i class="far fa-copy"></i></span><span class="coupon-code" onclick="copyToClipboard('EVERSHINE', this)">EVERSHINE <i class="far fa-copy"></i></span></div>
+                        <div class="card-period"><i class="far fa-clock"></i> 04.17(금) 23:59 ~ 04.20(월) 00:59</div>
+                    </div>
+                    <div class="card-footer">
+                        
+                        
+                    </div>
+                </div>
+                </div>
+            </div>
+            
+            <div class="kanban-column">
+                <h3 class="column-title">커뮤니티 <span class="count">1</span></h3>
+                <div class="column-grid">
+                <div class="event-card">
+                    <div class="card-header"><span class="tag-urgent">D-3</span></div>
+                    <div class="card-body">
+                        <div class="card-title">「명조 | Galaxy Store」 Galaxy S26 Ultra 명조:워더링 웨이브 치사 액세서리 에디션 출시 기념 커뮤니티 이벤트</div>
+                        <div class="card-period"><i class="far fa-clock"></i> 04.09(목) 23:59 ~ 04.22(수) 23:59</div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="https://game.naver.com/lounge/WutheringWaves/board/detail/7519123" target="_blank" class="btn-lounge">공지 확인</a>
+                        
+                    </div>
+                </div>
+                </div>
+            </div>
+            </div></div><div id="game_1" class="game-content" style="display: none;"><div class="header-group"><h2 class="section-game-title">젠레스 존 제로</h2><span class="live-indicator">LIVE</span></div><div class="kanban-layout">
+            <div class="kanban-column">
+                <h3 class="column-title">인 게임 <span class="count">4</span></h3>
+                <div class="column-grid">
+                <div class="event-card">
+                    <div class="card-header"></div>
+                    <div class="card-body">
+                        <div class="card-title">「신규 프로그램」 이벤트</div>
+                        <div class="card-period"><i class="far fa-clock"></i> 02.07(토) 23:59 ~ 05.05(화) 04:59</div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="https://game.naver.com/lounge/ZZZ/board/detail/7447315" target="_blank" class="btn-lounge">공지 확인</a>
+                        
+                    </div>
+                </div>
+                
+                <div class="event-card">
+                    <div class="card-header"></div>
+                    <div class="card-body">
+                        <div class="card-title">「펄펄 끓는 미식 탐방기」 이벤트</div>
+                        <div class="card-period"><i class="far fa-clock"></i> 03.25(수) 11:00 ~ 05.05(화) 04:59</div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="https://game.naver.com/lounge/ZZZ/board/detail/7447513" target="_blank" class="btn-lounge">공지 확인</a>
+                        
+                    </div>
+                </div>
+                
+                <div class="event-card">
+                    <div class="card-header"><span class="tag-urgent">D-1</span></div>
+                    <div class="card-body">
+                        <div class="card-title">「재난 특파대」 이벤트</div>
+                        <div class="card-period"><i class="far fa-clock"></i> 04.03(금) 11:00 ~ 04.20(월) 04:59</div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="https://game.naver.com/lounge/ZZZ/board/detail/7491218" target="_blank" class="btn-lounge">공지 확인</a>
+                        
+                    </div>
+                </div>
+                
+                <div class="event-card">
+                    <div class="card-header"></div>
+                    <div class="card-body">
+                        <div class="card-title">「오랜 친구, 새로운 의뢰!」 이벤트</div>
+                        <div class="card-period"><i class="far fa-clock"></i> 04.15(수) 11:00 ~ 05.05(화) 04:59</div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="https://game.naver.com/lounge/ZZZ/board/detail/7536665" target="_blank" class="btn-lounge">공지 확인</a>
+                        
+                    </div>
+                </div>
+                </div>
+            </div>
+            
+            <div class="kanban-column">
+                <h3 class="column-title">커뮤니티 <span class="count">1</span></h3>
+                <div class="column-grid">
+                <div class="event-card">
+                    <div class="card-header"></div>
+                    <div class="card-body">
+                        <div class="card-title">시시아의 끝없는 만찬</div>
+                        <div class="card-period"><i class="far fa-clock"></i> 04.17(금) 23:59 ~ 04.24(금) 23:59</div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="https://game.naver.com/lounge/ZZZ/board/detail/7546190" target="_blank" class="btn-lounge">공지 확인</a>
+                        
+                    </div>
+                </div>
+                </div>
+            </div>
+            </div></div><div id="game_2" class="game-content" style="display: none;"><div class="header-group"><h2 class="section-game-title">트릭컬 리바이브</h2><span class="live-indicator">LIVE</span></div><div class="kanban-layout">
+            <div class="kanban-column">
+                <h3 class="column-title">인 게임 <span class="count">7</span></h3>
+                <div class="column-grid">
+                <div class="event-card">
+                    <div class="card-header"></div>
+                    <div class="card-body">
+                        <div class="card-title">[이벤트] 트릭컬 리바이브 2.5주년 사전예약</div>
+                        <div class="card-period"><i class="far fa-clock"></i> 03.13(금) 23:59 ~ 04.23(목) 10:59</div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="https://game.naver.com/lounge/Trickcal/board/detail/7409333" target="_blank" class="btn-lounge">공지 확인</a>
+                        <a href="https://www.trickcal.com/" target="_blank" class="btn-web">참여 페이지</a>
+                    </div>
+                </div>
+                
+                <div class="event-card">
+                    <div class="card-header"></div>
+                    <div class="card-body">
+                        <div class="card-title">[테마극장] <여왕님의 마음으로 만든 나라></div>
+                        <div class="card-period"><i class="far fa-clock"></i> 03.26(목) 23:59 ~ 04.23(목) 10:59</div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="https://game.naver.com/lounge/Trickcal/board/detail/7452106" target="_blank" class="btn-lounge">공지 확인</a>
+                        
+                    </div>
+                </div>
+                
+                <div class="event-card">
+                    <div class="card-header"></div>
+                    <div class="card-body">
+                        <div class="card-title">[이벤트] 2.5주년 기념 에르핀의 다과회</div>
+                        <div class="card-period"><i class="far fa-clock"></i> 03.26(목) 23:59 ~ 04.23(목) 10:59</div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="https://game.naver.com/lounge/Trickcal/board/detail/7452146" target="_blank" class="btn-lounge">공지 확인</a>
+                        
+                    </div>
+                </div>
+                
+                <div class="event-card">
+                    <div class="card-header"></div>
+                    <div class="card-body">
+                        <div class="card-title">[이벤트] 2.5주년 기념 이달의 우수 복권</div>
+                        <div class="card-period"><i class="far fa-clock"></i> 03.26(목) 23:59 ~ 04.23(목) 10:59</div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="https://game.naver.com/lounge/Trickcal/board/detail/7452147" target="_blank" class="btn-lounge">공지 확인</a>
+                        
+                    </div>
+                </div>
+                
+                <div class="event-card">
+                    <div class="card-header"></div>
+                    <div class="card-body">
+                        <div class="card-title">[이벤트] 2.5주년 기념 특별 상점</div>
+                        <div class="card-period"><i class="far fa-clock"></i> 03.26(목) 23:59 ~ 04.23(목) 10:59</div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="https://game.naver.com/lounge/Trickcal/board/detail/7452148" target="_blank" class="btn-lounge">공지 확인</a>
+                        
+                    </div>
+                </div>
+                
+                <div class="event-card">
+                    <div class="card-header"></div>
+                    <div class="card-body">
+                        <div class="card-title">[이벤트] 미니게임 [결재 서류가 맛있는 건에 대하여]</div>
+                        <div class="card-period"><i class="far fa-clock"></i> 04.02(목) 23:59 ~ 04.23(목) 10:59</div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="https://game.naver.com/lounge/Trickcal/board/detail/7491967" target="_blank" class="btn-lounge">공지 확인</a>
+                        
+                    </div>
+                </div>
+                
+                <div class="event-card">
+                    <div class="card-header"></div>
+                    <div class="card-body">
+                        <div class="card-title">[테마극장] <뜨거운 도시의 믿을만한 녀석></div>
+                        <div class="card-period"><i class="far fa-clock"></i> 04.09(목) 23:59 ~ 04.23(목) 10:59</div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="https://game.naver.com/lounge/Trickcal/board/detail/7513183" target="_blank" class="btn-lounge">공지 확인</a>
+                        
+                    </div>
+                </div>
+                </div>
+            </div>
+            
+            <div class="kanban-column">
+                <h3 class="column-title">쿠폰 <span class="count">1</span></h3>
+                <div class="column-grid">
+                <div class="event-card">
+                    <div class="card-header"></div>
+                    <div class="card-body">
+                        <div class="coupon-group"><span class="coupon-code" onclick="copyToClipboard('SURVIBOL', this)">SURVIBOL <i class="far fa-copy"></i></span></div>
+                        <div class="card-period"><i class="far fa-clock"></i>  ~ 04.23(목) 10:59</div>
+                    </div>
+                    <div class="card-footer">
+                        
+                        
+                    </div>
+                </div>
+                </div>
+            </div>
+            
+            <div class="kanban-column">
+                <h3 class="column-title">커뮤니티 <span class="count">1</span></h3>
+                <div class="column-grid">
+                <div class="event-card">
+                    <div class="card-header"></div>
+                    <div class="card-body">
+                        <div class="card-title">[커뮤니티] 2.5주년 사전예약 참여 인증 이벤트</div>
+                        <div class="card-period"><i class="far fa-clock"></i> 03.13(금) 23:59 ~ 04.23(목) 10:59</div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="https://game.naver.com/lounge/Trickcal/board/detail/7409362" target="_blank" class="btn-lounge">공지 확인</a>
+                        
+                    </div>
+                </div>
+                </div>
+            </div>
+            </div></div>
+            </div>
+        </main>
     </div>
+    <div id="toast" class="toast">복사 완료! 🎁</div>
     <script>
+        function copyToClipboard(text, el) {
+            navigator.clipboard.writeText(text).then(() => {
+                const toast = document.getElementById('toast');
+                toast.classList.add('show');
+                const originalContent = el.innerHTML;
+                el.innerHTML = 'COPIED! <i class="fas fa-check"></i>';
+                el.classList.add('copied');
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                    el.innerHTML = originalContent;
+                    el.classList.remove('copied');
+                }, 1500);
+            });
+        }
         function switchGame(gameId, btn) {
-            document.querySelectorAll('.game-content').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.game-content').forEach(el => {
+                el.style.opacity = '0';
+                setTimeout(() => el.style.display = 'none', 200);
+            });
             document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
-            document.getElementById(gameId).style.display = 'block';
+            setTimeout(() => {
+                const target = document.getElementById(gameId);
+                if (target) {
+                    target.style.display = 'block';
+                    setTimeout(() => target.style.opacity = '1', 50);
+                }
+            }, 200);
             btn.classList.add('active');
         }
     </script>
