@@ -4,6 +4,8 @@ import json
 import traceback
 import re
 from datetime import datetime, timedelta
+import requests
+from dotenv import load_dotenv
 
 # 설정
 EXCEL_FILE = "events.xlsx"
@@ -313,6 +315,55 @@ def generate_html(events):
         f.write(html_template)
     print("[Success] index.html 최종 업데이트 완료.")
 
+def send_discord_notification(events, webhook_url):
+    """마감 임박 이벤트를 추려 디스코드 웹후크로 알림을 보냅니다."""
+    now = datetime.now()
+    urgent_events = [ev for ev in events if ev.get("urgent_tag") and "D-" in ev.get("urgent_tag") or ev.get("urgent_tag") == "D-Day"]
+    
+    if not urgent_events:
+        print("[System] 마감 임박 이벤트가 없어 디스코드 알림을 건너뜁니다.")
+        return
+
+    # 게임별로 그룹화
+    game_groups = {}
+    for ev in urgent_events:
+        game = ev['game']
+        if game not in game_groups: game_groups[game] = []
+        game_groups[game].append(ev)
+
+    embeds = []
+    for game, ev_list in game_groups.items():
+        description = ""
+        for ev in ev_list:
+            tag = f"**[{ev['urgent_tag']}]**"
+            category = f"`{ev['category']}`"
+            description += f"{tag} {category} {ev['title']}\n"
+            description += f"└ 🕒 {ev['period']}\n\n"
+        
+        embeds.append({
+            "title": f"🎮 {game} 마감 임박 이벤트",
+            "description": description,
+            "color": 15814466, # Urgent Red
+            "footer": {"text": "Game Event Tracker | " + now.strftime('%Y-%m-%d %H:%M')}
+        })
+
+    # 전체 대시보드 링크 추가
+    dashboard_url = "https://lihally0810.github.io/Game-event-dashboard/"
+    
+    payload = {
+        "content": f"📢 **오늘의 게임 이벤트 마감 현황입니다!**\n자세한 내용은 [대시보드]({dashboard_url})에서 확인하세요.",
+        "embeds": embeds[:10] # 디스코드는 한 번에 최대 10개 임베드 가능
+    }
+
+    try:
+        response = requests.post(webhook_url, json=payload)
+        if response.status_code == 204:
+            print("[Success] 디스코드 알림 전송 완료.")
+        else:
+            print(f"[Warning] 디스코드 알림 전송 실패: {response.status_code}")
+    except Exception as e:
+        print(f"[Error] 디스코드 알림 중 오류 발생: {e}")
+
 if __name__ == "__main__":
     import sys
     import io
@@ -322,3 +373,11 @@ if __name__ == "__main__":
     print(f"[System] 대시보드 업데이트를 시작합니다...")
     event_data = load_events_from_excel(EXCEL_FILE)
     generate_html(event_data)
+
+    # 디스코드 알림 전송
+    load_dotenv()
+    webhook_url = os.getenv("DISCORD_WEBHOOK_URL")
+    if webhook_url:
+        send_discord_notification(event_data, webhook_url)
+    else:
+        print("[Warning] DISCORD_WEBHOOK_URL이 설정되지 않아 알림을 보낼 수 없습니다.")
