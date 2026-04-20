@@ -18,3 +18,13 @@ setup_automation.ps1
 
 # Artifacts
 index.html.bak
+
+# Build Artifacts
+build/
+dist/
+*.spec
+main.exe
+
+# Private Data
+events.xlsx
+~$events.xlsx
