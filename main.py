@@ -147,6 +147,10 @@ def load_events_from_excel(file_path):
 
 def generate_html(events):
     """정규화된 데이터를 기반으로 대시보드 생성"""
+    if not events:
+        print("[Warning] 수집된 이벤트 데이터가 없습니다. index.html 업데이트를 중단합니다.")
+        return
+    
     css_content = ""
     # 1. 외부 style.css 확인 (사용자 수정 가능성)
     # 2. EXE 내부 번들된 style.css 확인
