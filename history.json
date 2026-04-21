@@ -7,7 +7,7 @@
     "lounge_link": "https://game.naver.com/lounge/WutheringWaves/board/detail/7430386",
     "web_link": null,
     "urgent_tag": "",
-    "is_new": true
+    "is_new": false
   },
   {
     "game": "명조",
@@ -17,7 +17,7 @@
     "lounge_link": "https://game.naver.com/lounge/WutheringWaves/board/detail/7430386",
     "web_link": null,
     "urgent_tag": "",
-    "is_new": true
+    "is_new": false
   },
   {
     "game": "명조",
@@ -27,7 +27,7 @@
     "lounge_link": "https://game.naver.com/lounge/WutheringWaves/board/detail/7539277",
     "web_link": null,
     "urgent_tag": "",
-    "is_new": true
+    "is_new": false
   },
   {
     "game": "명조",
@@ -37,7 +37,7 @@
     "lounge_link": "https://game.naver.com/lounge/WutheringWaves/board/detail/7519123",
     "web_link": null,
     "urgent_tag": "D-1",
-    "is_new": true
+    "is_new": false
   },
   {
     "game": "젠레스 존 제로",
@@ -47,7 +47,7 @@
     "lounge_link": "https://game.naver.com/lounge/ZZZ/board/detail/7447315",
     "web_link": null,
     "urgent_tag": "",
-    "is_new": true
+    "is_new": false
   },
   {
     "game": "젠레스 존 제로",
@@ -57,7 +57,7 @@
     "lounge_link": "https://game.naver.com/lounge/ZZZ/board/detail/7447513",
     "web_link": null,
     "urgent_tag": "",
-    "is_new": true
+    "is_new": false
   },
   {
     "game": "젠레스 존 제로",
@@ -67,7 +67,7 @@
     "lounge_link": "https://game.naver.com/lounge/ZZZ/board/detail/7536665",
     "web_link": null,
     "urgent_tag": "",
-    "is_new": true
+    "is_new": false
   },
   {
     "game": "젠레스 존 제로",
@@ -77,7 +77,7 @@
     "lounge_link": "https://game.naver.com/lounge/ZZZ/board/detail/7546190",
     "web_link": null,
     "urgent_tag": "D-3",
-    "is_new": true
+    "is_new": false
   },
   {
     "game": "젠레스 존 제로",
@@ -87,7 +87,7 @@
     "lounge_link": "https://game.naver.com/lounge/ZZZ/board/detail/7558465",
     "web_link": null,
     "urgent_tag": "",
-    "is_new": true
+    "is_new": false
   },
   {
     "game": "트릭컬 리바이브",
@@ -97,7 +97,7 @@
     "lounge_link": "https://game.naver.com/lounge/Trickcal/board/detail/7509077",
     "web_link": null,
     "urgent_tag": "D-2",
-    "is_new": true
+    "is_new": false
   },
   {
     "game": "트릭컬 리바이브",
@@ -107,7 +107,7 @@
     "lounge_link": "https://game.naver.com/lounge/Trickcal/board/detail/7558230",
     "web_link": null,
     "urgent_tag": "",
-    "is_new": true
+    "is_new": false
   },
   {
     "game": "트릭컬 리바이브",
@@ -117,7 +117,7 @@
     "lounge_link": "https://game.naver.com/lounge/Trickcal/board/detail/7409333",
     "web_link": "https://www.trickcal.com/",
     "urgent_tag": "D-2",
-    "is_new": true
+    "is_new": false
   },
   {
     "game": "트릭컬 리바이브",
@@ -127,7 +127,7 @@
     "lounge_link": "https://game.naver.com/lounge/Trickcal/board/detail/7409362",
     "web_link": null,
     "urgent_tag": "D-2",
-    "is_new": true
+    "is_new": false
   },
   {
     "game": "트릭컬 리바이브",
@@ -137,7 +137,7 @@
     "lounge_link": "https://game.naver.com/lounge/Trickcal/board/detail/7452106",
     "web_link": null,
     "urgent_tag": "D-2",
-    "is_new": true
+    "is_new": false
   },
   {
     "game": "트릭컬 리바이브",
@@ -147,7 +147,7 @@
     "lounge_link": "https://game.naver.com/lounge/Trickcal/board/detail/7452146",
     "web_link": null,
     "urgent_tag": "D-2",
-    "is_new": true
+    "is_new": false
   },
   {
     "game": "트릭컬 리바이브",
@@ -157,7 +157,7 @@
     "lounge_link": "https://game.naver.com/lounge/Trickcal/board/detail/7452147",
     "web_link": null,
     "urgent_tag": "D-2",
-    "is_new": true
+    "is_new": false
   },
   {
     "game": "트릭컬 리바이브",
@@ -167,7 +167,7 @@
     "lounge_link": "https://game.naver.com/lounge/Trickcal/board/detail/7452148",
     "web_link": null,
     "urgent_tag": "D-2",
-    "is_new": true
+    "is_new": false
   },
   {
     "game": "트릭컬 리바이브",
@@ -177,7 +177,7 @@
     "lounge_link": "https://game.naver.com/lounge/Trickcal/board/detail/7491967",
     "web_link": null,
     "urgent_tag": "D-2",
-    "is_new": true
+    "is_new": false
   },
   {
     "game": "트릭컬 리바이브",
@@ -187,6 +187,6 @@
     "lounge_link": "https://game.naver.com/lounge/Trickcal/board/detail/7513183",
     "web_link": null,
     "urgent_tag": "D-2",
-    "is_new": true
+    "is_new": false
   }
 ]
