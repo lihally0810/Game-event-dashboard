@@ -255,6 +255,9 @@ body {
 .card-header {
     margin-bottom: 12px;
     height: 20px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
 }
 
 .tag-urgent {
@@ -265,6 +268,18 @@ body {
     padding: 3px 8px;
     border-radius: 4px;
     box-shadow: 0 0 15px rgba(242, 63, 66, 0.4);
+}
+
+.tag-new {
+    background: linear-gradient(135deg, #7289da, #5865f2);
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 4px;
+    box-shadow: 0 0 15px var(--accent-glow);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .card-title {

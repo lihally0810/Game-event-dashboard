@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 # 설정
 EXCEL_FILE = "events.xlsx"
 CSS_FILE = "style.css"
+HISTORY_FILE = "history.json"
 
 def resource_path(relative_path):
     """ 실행 파일 내에 포함된 리소스의 실제 경로를 반환합니다. """
@@ -91,6 +92,17 @@ def load_events_from_excel(file_path):
         events = []
         now = datetime.now()
         
+        # 이전 데이터 로드 (NEW 배지 판정용)
+        history = []
+        if os.path.exists(HISTORY_FILE):
+            try:
+                with open(HISTORY_FILE, "r", encoding="utf-8") as f:
+                    history = json.load(f)
+            except: pass
+        
+        # 비교를 위한 키 세트 생성 (게임, 카테고리, 제목)
+        history_keys = {f"{h.get('game')}|{h.get('category')}|{h.get('title')}" for h in history}
+        
         for _, row in df.iterrows():
             game = str(row.get('게임', '기타')).strip()
             category = str(row.get('카테고리', '인 게임')).strip()
@@ -128,6 +140,10 @@ def load_events_from_excel(file_path):
             if web_link.lower() in ['nan', 'none', '', 'null']:
                 web_link = None
             
+            # NEW 배지 판정: 이전 기록에 없으면 True
+            current_key = f"{game}|{category}|{title}"
+            is_new = current_key not in history_keys
+            
             events.append({
                 "game": game,
                 "category": category,
@@ -135,10 +151,18 @@ def load_events_from_excel(file_path):
                 "period": period,
                 "lounge_link": lounge_link,
                 "web_link": web_link,
-                "urgent_tag": urgent_tag_text
+                "urgent_tag": urgent_tag_text,
+                "is_new": is_new
             })
         
-        print(f"[System] 데이터 로드 및 정규화 완료: {len(events)}개 항목")
+        print(f"[System] 데이터 로드 및 정규화 완료: {len(events)}개 항목 (새 항목: {sum(1 for e in events if e['is_new'])}개)")
+        
+        # 현재 상태를 히스토리에 저장 (다음 실행 시 NEW 제거를 위해)
+        try:
+            with open(HISTORY_FILE, "w", encoding="utf-8") as f:
+                json.dump(events, f, ensure_ascii=False, indent=2)
+        except: pass
+        
         return events
     except Exception:
         print("[Error] Excel 파일을 읽는 중 오류가 발생했습니다.")
@@ -206,6 +230,9 @@ def generate_html(events):
                 tag_text = ev.get("urgent_tag", "")
                 urgent_tag = f'<span class="tag-urgent">{tag_text}</span>' if tag_text else ""
                 
+                # NEW 배지 추가
+                new_tag = '<span class="tag-new">NEW</span>' if ev.get("is_new") else ""
+                
                 if category == "쿠폰":
                     origin_title = ev.get('title', '제목없음')
                     codes = [c.strip() for c in origin_title.split('/')]
@@ -222,7 +249,7 @@ def generate_html(events):
                 web_btn = f'<a href="{ev.get("web_link")}" target="_blank" class="btn-web">참여 페이지</a>' if ev.get("web_link") else ""
                 cards += f"""
                 <div class="event-card">
-                    <div class="card-header">{urgent_tag}</div>
+                    <div class="card-header">{urgent_tag}{new_tag}</div>
                     <div class="card-body">
                         {title_html}
                         <div class="card-period"><i class="far fa-clock"></i> {ev.get('period', '기간 확인 중')}</div>
