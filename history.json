@@ -31,13 +31,23 @@
   },
   {
     "game": "명조",
+    "category": "인 게임",
+    "title": "｢조수의 소리 축제 응원｣ 웹페이지 이벤트",
+    "period": " ~ 06.07(일) 19:00",
+    "lounge_link": "https://game.naver.com/lounge/WutheringWaves/board/detail/7567690",
+    "web_link": "https://2nd-anniversary.kurogames-global.com/?lang=kr",
+    "urgent_tag": "",
+    "is_new": true
+  },
+  {
+    "game": "명조",
     "category": "커뮤니티",
-    "title": "「명조 | Galaxy Store」 Galaxy S26 Ultra 명조:워더링 웨이브 치사 액세서리 에디션 출시 기념 커뮤니티 이벤트",
-    "period": "04.09(목) 23:59 ~ 04.22(수) 23:59",
-    "lounge_link": "https://game.naver.com/lounge/WutheringWaves/board/detail/7519123",
-    "web_link": null,
-    "urgent_tag": "D-Day",
-    "is_new": false
+    "title": "골든 웨이브 테마 레코드 세트 & 워더링 사운드 테마 굿즈 예약 판매",
+    "period": " ~ 04.29(수) 23:59",
+    "lounge_link": "https://game.naver.com/lounge/WutheringWaves/board/detail/7571695",
+    "web_link": "https://ttabbaemall.co.kr/product/list.html?cate_no=408",
+    "urgent_tag": "",
+    "is_new": true
   },
   {
     "game": "젠레스 존 제로",
@@ -76,7 +86,7 @@
     "period": "04.17(금) 23:59 ~ 04.24(금) 23:59",
     "lounge_link": "https://game.naver.com/lounge/ZZZ/board/detail/7546190",
     "web_link": null,
-    "urgent_tag": "D-2",
+    "urgent_tag": "D-1",
     "is_new": false
   },
   {
@@ -92,16 +102,6 @@
   {
     "game": "트릭컬 리바이브",
     "category": "쿠폰",
-    "title": "SURVIBOL",
-    "period": " ~ 04.23(목) 10:59",
-    "lounge_link": "https://game.naver.com/lounge/Trickcal/board/detail/7509077",
-    "web_link": null,
-    "urgent_tag": "D-1",
-    "is_new": false
-  },
-  {
-    "game": "트릭컬 리바이브",
-    "category": "쿠폰",
     "title": "80KYOUTUBE",
     "period": " ~ 04.30(목) 10:59",
     "lounge_link": "https://game.naver.com/lounge/Trickcal/board/detail/7558230",
@@ -112,81 +112,31 @@
   {
     "game": "트릭컬 리바이브",
     "category": "인 게임",
-    "title": "[이벤트] 트릭컬 리바이브 2.5주년 사전예약",
-    "period": "03.13(금) 23:59 ~ 04.23(목) 10:59",
-    "lounge_link": "https://game.naver.com/lounge/Trickcal/board/detail/7409333",
-    "web_link": "https://www.trickcal.com/",
-    "urgent_tag": "D-1",
-    "is_new": false
-  },
-  {
-    "game": "트릭컬 리바이브",
-    "category": "커뮤니티",
-    "title": "[커뮤니티] 2.5주년 사전예약 참여 인증 이벤트",
-    "period": "03.13(금) 23:59 ~ 04.23(목) 10:59",
-    "lounge_link": "https://game.naver.com/lounge/Trickcal/board/detail/7409362",
+    "title": "[테마극장] <눈물의 보석, 웃음의 꿈>",
+    "period": "04.23(목) 23:59 ~ 05.07(목) 10:59",
+    "lounge_link": "https://game.naver.com/lounge/Trickcal/board/detail/7562103",
     "web_link": null,
-    "urgent_tag": "D-1",
-    "is_new": false
+    "urgent_tag": "",
+    "is_new": true
   },
   {
     "game": "트릭컬 리바이브",
     "category": "인 게임",
-    "title": "[테마극장] <여왕님의 마음으로 만든 나라>",
-    "period": "03.26(목) 23:59 ~ 04.23(목) 10:59",
-    "lounge_link": "https://game.naver.com/lounge/Trickcal/board/detail/7452106",
+    "title": "[이벤트] 신규 사도 \"아라그니아\" 픽업 모집",
+    "period": "04.23(목) 23:59 ~ 05.07(목) 10:59",
+    "lounge_link": "https://game.naver.com/lounge/Trickcal/board/detail/7562114",
     "web_link": null,
-    "urgent_tag": "D-1",
-    "is_new": false
+    "urgent_tag": "",
+    "is_new": true
   },
   {
     "game": "트릭컬 리바이브",
     "category": "인 게임",
-    "title": "[이벤트] 2.5주년 기념 에르핀의 다과회",
-    "period": "03.26(목) 23:59 ~ 04.23(목) 10:59",
-    "lounge_link": "https://game.naver.com/lounge/Trickcal/board/detail/7452146",
+    "title": "[이벤트] 신규 스펙타클 카드 뽑기",
+    "period": "04.23(목) 23:59 ~ 05.07(목) 10:59",
+    "lounge_link": "https://game.naver.com/lounge/Trickcal/board/detail/7562117",
     "web_link": null,
-    "urgent_tag": "D-1",
-    "is_new": false
-  },
-  {
-    "game": "트릭컬 리바이브",
-    "category": "인 게임",
-    "title": "[이벤트] 2.5주년 기념 이달의 우수 복권",
-    "period": "03.26(목) 23:59 ~ 04.23(목) 10:59",
-    "lounge_link": "https://game.naver.com/lounge/Trickcal/board/detail/7452147",
-    "web_link": null,
-    "urgent_tag": "D-1",
-    "is_new": false
-  },
-  {
-    "game": "트릭컬 리바이브",
-    "category": "인 게임",
-    "title": "[이벤트] 2.5주년 기념 특별 상점",
-    "period": "03.26(목) 23:59 ~ 04.23(목) 10:59",
-    "lounge_link": "https://game.naver.com/lounge/Trickcal/board/detail/7452148",
-    "web_link": null,
-    "urgent_tag": "D-1",
-    "is_new": false
-  },
-  {
-    "game": "트릭컬 리바이브",
-    "category": "인 게임",
-    "title": "[이벤트] 미니게임 [결재 서류가 맛있는 건에 대하여]",
-    "period": "04.02(목) 23:59 ~ 04.23(목) 10:59",
-    "lounge_link": "https://game.naver.com/lounge/Trickcal/board/detail/7491967",
-    "web_link": null,
-    "urgent_tag": "D-1",
-    "is_new": false
-  },
-  {
-    "game": "트릭컬 리바이브",
-    "category": "인 게임",
-    "title": "[테마극장] <뜨거운 도시의 믿을만한 녀석>",
-    "period": "04.09(목) 23:59 ~ 04.23(목) 10:59",
-    "lounge_link": "https://game.naver.com/lounge/Trickcal/board/detail/7513183",
-    "web_link": null,
-    "urgent_tag": "D-1",
-    "is_new": false
+    "urgent_tag": "",
+    "is_new": true
   }
 ]
