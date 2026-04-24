@@ -37,7 +37,7 @@
     "lounge_link": "https://game.naver.com/lounge/WutheringWaves/board/detail/7567690",
     "web_link": "https://2nd-anniversary.kurogames-global.com/?lang=kr",
     "urgent_tag": "",
-    "is_new": true
+    "is_new": false
   },
   {
     "game": "명조",
@@ -47,7 +47,7 @@
     "lounge_link": "https://game.naver.com/lounge/WutheringWaves/board/detail/7571695",
     "web_link": "https://ttabbaemall.co.kr/product/list.html?cate_no=408",
     "urgent_tag": "",
-    "is_new": true
+    "is_new": false
   },
   {
     "game": "젠레스 존 제로",
@@ -86,7 +86,7 @@
     "period": "04.17(금) 23:59 ~ 04.24(금) 23:59",
     "lounge_link": "https://game.naver.com/lounge/ZZZ/board/detail/7546190",
     "web_link": null,
-    "urgent_tag": "D-1",
+    "urgent_tag": "D-Day",
     "is_new": false
   },
   {
@@ -117,7 +117,7 @@
     "lounge_link": "https://game.naver.com/lounge/Trickcal/board/detail/7562103",
     "web_link": null,
     "urgent_tag": "",
-    "is_new": true
+    "is_new": false
   },
   {
     "game": "트릭컬 리바이브",
@@ -127,7 +127,7 @@
     "lounge_link": "https://game.naver.com/lounge/Trickcal/board/detail/7562114",
     "web_link": null,
     "urgent_tag": "",
-    "is_new": true
+    "is_new": false
   },
   {
     "game": "트릭컬 리바이브",
@@ -137,6 +137,16 @@
     "lounge_link": "https://game.naver.com/lounge/Trickcal/board/detail/7562117",
     "web_link": null,
     "urgent_tag": "",
+    "is_new": false
+  },
+  {
+    "game": "트릭컬 리바이브",
+    "category": "인 게임",
+    "title": "[업데이트] 주말 콘텐츠 「트릭다이스」 BETA",
+    "period": "04.24(금) 12:00 ~ 04.27(월) 03:59",
+    "lounge_link": "https://game.naver.com/lounge/Trickcal/board/detail/7566705",
+    "web_link": null,
+    "urgent_tag": "D-3",
     "is_new": true
   }
 ]
