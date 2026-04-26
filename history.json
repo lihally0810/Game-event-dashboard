@@ -6,7 +6,7 @@
     "period": "03.02(월) 23:59 ~ 04.29(수) 12:59",
     "lounge_link": "https://game.naver.com/lounge/WutheringWaves/board/detail/7430386",
     "web_link": null,
-    "urgent_tag": "",
+    "urgent_tag": "D-3",
     "is_new": false
   },
   {
@@ -16,7 +16,7 @@
     "period": "04.09(목) 11:00 ~ 04.29(수) 04:59",
     "lounge_link": "https://game.naver.com/lounge/WutheringWaves/board/detail/7430386",
     "web_link": null,
-    "urgent_tag": "",
+    "urgent_tag": "D-3",
     "is_new": false
   },
   {
@@ -26,7 +26,7 @@
     "period": "04.16(목) 05:00 ~ 04.29(수) 04:59",
     "lounge_link": "https://game.naver.com/lounge/WutheringWaves/board/detail/7539277",
     "web_link": null,
-    "urgent_tag": "",
+    "urgent_tag": "D-3",
     "is_new": false
   },
   {
@@ -46,7 +46,7 @@
     "period": " ~ 04.29(수) 23:59",
     "lounge_link": "https://game.naver.com/lounge/WutheringWaves/board/detail/7571695",
     "web_link": "https://ttabbaemall.co.kr/product/list.html?cate_no=408",
-    "urgent_tag": "",
+    "urgent_tag": "D-3",
     "is_new": false
   },
   {
@@ -86,7 +86,7 @@
     "period": "04.17(금) 23:59 ~ 04.24(금) 23:59",
     "lounge_link": "https://game.naver.com/lounge/ZZZ/board/detail/7546190",
     "web_link": null,
-    "urgent_tag": "D-Day",
+    "urgent_tag": "",
     "is_new": false
   },
   {
@@ -146,7 +146,7 @@
     "period": "04.24(금) 12:00 ~ 04.27(월) 03:59",
     "lounge_link": "https://game.naver.com/lounge/Trickcal/board/detail/7566705",
     "web_link": null,
-    "urgent_tag": "D-3",
-    "is_new": true
+    "urgent_tag": "D-1",
+    "is_new": false
   }
 ]
