@@ -2,36 +2,6 @@
   {
     "game": "명조",
     "category": "인 게임",
-    "title": "[리듬을 따라 출항] 음악 도전 이벤트",
-    "period": "03.02(월) 23:59 ~ 04.29(수) 12:59",
-    "lounge_link": "https://game.naver.com/lounge/WutheringWaves/board/detail/7430386",
-    "web_link": null,
-    "urgent_tag": "D-2",
-    "is_new": false
-  },
-  {
-    "game": "명조",
-    "category": "인 게임",
-    "title": "[황야의 기사] 기간 한정 도전 이벤트",
-    "period": "04.09(목) 11:00 ~ 04.29(수) 04:59",
-    "lounge_link": "https://game.naver.com/lounge/WutheringWaves/board/detail/7430386",
-    "web_link": null,
-    "urgent_tag": "D-2",
-    "is_new": false
-  },
-  {
-    "game": "명조",
-    "category": "인 게임",
-    "title": "[기억 속 진홍빛 그림자] 사전 테마 이벤트",
-    "period": "04.16(목) 05:00 ~ 04.29(수) 04:59",
-    "lounge_link": "https://game.naver.com/lounge/WutheringWaves/board/detail/7539277",
-    "web_link": null,
-    "urgent_tag": "D-2",
-    "is_new": false
-  },
-  {
-    "game": "명조",
-    "category": "인 게임",
     "title": "｢조수의 소리 축제 응원｣ 웹페이지 이벤트",
     "period": " ~ 06.07(일) 19:00",
     "lounge_link": "https://game.naver.com/lounge/WutheringWaves/board/detail/7567690",
@@ -42,12 +12,12 @@
   {
     "game": "명조",
     "category": "커뮤니티",
-    "title": "골든 웨이브 테마 레코드 세트 & 워더링 사운드 테마 굿즈 예약 판매",
-    "period": " ~ 04.29(수) 23:59",
-    "lounge_link": "https://game.naver.com/lounge/WutheringWaves/board/detail/7571695",
-    "web_link": "https://ttabbaemall.co.kr/product/list.html?cate_no=408",
-    "urgent_tag": "D-2",
-    "is_new": false
+    "title": "히유키 캐릭터 트레일러 댓글 이벤트",
+    "period": "04.28(화) 23:59 ~ 05.28(목) 23:59",
+    "lounge_link": "https://game.naver.com/lounge/WutheringWaves/board/detail/7590925",
+    "web_link": null,
+    "urgent_tag": "",
+    "is_new": true
   },
   {
     "game": "젠레스 존 제로",
@@ -97,6 +67,16 @@
     "lounge_link": "https://game.naver.com/lounge/ZZZ/board/detail/7577580",
     "web_link": "https://store.steampowered.com/app/4162040/Zenless_Zone_Zero/",
     "urgent_tag": "",
+    "is_new": false
+  },
+  {
+    "game": "젠레스 존 제로",
+    "category": "인 게임",
+    "title": "「출격! 혹평 대작전」 이벤트",
+    "period": "04.29(수) 11:00 ~ 05.13(수) 04:59",
+    "lounge_link": "https://game.naver.com/lounge/ZZZ/board/detail/7587348",
+    "web_link": null,
+    "urgent_tag": "",
     "is_new": true
   },
   {
@@ -106,7 +86,7 @@
     "period": " ~ 04.30(목) 10:59",
     "lounge_link": "https://game.naver.com/lounge/Trickcal/board/detail/7558230",
     "web_link": null,
-    "urgent_tag": "D-3",
+    "urgent_tag": "D-Day",
     "is_new": false
   },
   {
