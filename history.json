@@ -11,11 +11,61 @@
   },
   {
     "game": "명조",
+    "category": "인 게임",
+    "title": "「스타 바운싱」 2주년 축제 이벤트",
+    "period": "05.02(토) 05:00 ~ 06.07(일) 12:59",
+    "lounge_link": "https://game.naver.com/lounge/WutheringWaves/board/detail/7610207",
+    "web_link": null,
+    "urgent_tag": "",
+    "is_new": true
+  },
+  {
+    "game": "명조",
     "category": "커뮤니티",
     "title": "히유키 캐릭터 트레일러 댓글 이벤트",
     "period": "04.28(화) 23:59 ~ 05.28(목) 23:59",
     "lounge_link": "https://game.naver.com/lounge/WutheringWaves/board/detail/7590925",
     "web_link": null,
+    "urgent_tag": "",
+    "is_new": false
+  },
+  {
+    "game": "명조",
+    "category": "커뮤니티",
+    "title": "띵조 페스티벌 무료 초대권, AirPods 등 특별 경품을 받을 수 있는 기회! 2주년 축제 기념 이벤트",
+    "period": "04.30(목) 23:59 ~ 05.17(일) 23:59",
+    "lounge_link": "https://game.naver.com/lounge/WutheringWaves/board/detail/7601671",
+    "web_link": null,
+    "urgent_tag": "",
+    "is_new": true
+  },
+  {
+    "game": "명조",
+    "category": "커뮤니티",
+    "title": "3.3 버전 스트리밍 드롭스 이벤트",
+    "period": "04.30(목) 12:00 ~ 05.28(목) 11:59",
+    "lounge_link": "https://game.naver.com/lounge/WutheringWaves/board/detail/7602059",
+    "web_link": "https://chzzk.naver.com/category/GAME/WutheringWaves/lives",
+    "urgent_tag": "",
+    "is_new": true
+  },
+  {
+    "game": "명조",
+    "category": "커뮤니티",
+    "title": "강하면서도 믿음직한 ｢영세의 타오르는 벚꽃의 무녀｣ —— 퀴즈 이벤트",
+    "period": "05.02(토) 23:59 ~ 05.08(금) 23:59",
+    "lounge_link": "https://game.naver.com/lounge/WutheringWaves/board/detail/7615146",
+    "web_link": null,
+    "urgent_tag": "",
+    "is_new": true
+  },
+  {
+    "game": "명조",
+    "category": "커뮤니티",
+    "title": "｢띵조 페스티벌: 빛나는 순간, 당신과 함께｣ 티켓 판매 사전 예고",
+    "period": "05.08(금) 20:00 ~ 05.30(토) 23:59",
+    "lounge_link": "https://game.naver.com/lounge/WutheringWaves/board/detail/7610362",
+    "web_link": "https://www.ticketlink.co.kr/product/63023",
     "urgent_tag": "",
     "is_new": true
   },
@@ -26,7 +76,7 @@
     "period": "02.07(토) 23:59 ~ 05.05(화) 04:59",
     "lounge_link": "https://game.naver.com/lounge/ZZZ/board/detail/7447315",
     "web_link": null,
-    "urgent_tag": "",
+    "urgent_tag": "D-1",
     "is_new": false
   },
   {
@@ -36,7 +86,7 @@
     "period": "03.25(수) 11:00 ~ 05.05(화) 04:59",
     "lounge_link": "https://game.naver.com/lounge/ZZZ/board/detail/7447513",
     "web_link": null,
-    "urgent_tag": "",
+    "urgent_tag": "D-1",
     "is_new": false
   },
   {
@@ -46,7 +96,7 @@
     "period": "04.15(수) 11:00 ~ 05.05(화) 04:59",
     "lounge_link": "https://game.naver.com/lounge/ZZZ/board/detail/7536665",
     "web_link": null,
-    "urgent_tag": "",
+    "urgent_tag": "D-1",
     "is_new": false
   },
   {
@@ -56,7 +106,7 @@
     "period": "04.22(수) 11:00 ~ 05.05(화) 04:59",
     "lounge_link": "https://game.naver.com/lounge/ZZZ/board/detail/7558465",
     "web_link": null,
-    "urgent_tag": "",
+    "urgent_tag": "D-1",
     "is_new": false
   },
   {
@@ -77,17 +127,17 @@
     "lounge_link": "https://game.naver.com/lounge/ZZZ/board/detail/7587348",
     "web_link": null,
     "urgent_tag": "",
-    "is_new": true
+    "is_new": false
   },
   {
     "game": "트릭컬 리바이브",
     "category": "쿠폰",
-    "title": "80KYOUTUBE",
-    "period": " ~ 04.30(목) 10:59",
-    "lounge_link": "https://game.naver.com/lounge/Trickcal/board/detail/7558230",
+    "title": "SPAOCOLLABOL",
+    "period": "05.01(금) 23:59 ~ 06.30(화) 23:59",
+    "lounge_link": "https://game.naver.com/lounge/Trickcal/board/detail/7609888",
     "web_link": null,
-    "urgent_tag": "D-Day",
-    "is_new": false
+    "urgent_tag": "",
+    "is_new": true
   },
   {
     "game": "트릭컬 리바이브",
@@ -96,7 +146,7 @@
     "period": "04.23(목) 23:59 ~ 05.07(목) 10:59",
     "lounge_link": "https://game.naver.com/lounge/Trickcal/board/detail/7562103",
     "web_link": null,
-    "urgent_tag": "",
+    "urgent_tag": "D-3",
     "is_new": false
   },
   {
@@ -106,7 +156,7 @@
     "period": "04.23(목) 23:59 ~ 05.07(목) 10:59",
     "lounge_link": "https://game.naver.com/lounge/Trickcal/board/detail/7562114",
     "web_link": null,
-    "urgent_tag": "",
+    "urgent_tag": "D-3",
     "is_new": false
   },
   {
@@ -116,7 +166,7 @@
     "period": "04.23(목) 23:59 ~ 05.07(목) 10:59",
     "lounge_link": "https://game.naver.com/lounge/Trickcal/board/detail/7562117",
     "web_link": null,
-    "urgent_tag": "",
+    "urgent_tag": "D-3",
     "is_new": false
   }
 ]
