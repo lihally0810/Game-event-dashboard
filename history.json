@@ -17,7 +17,7 @@
     "lounge_link": "https://game.naver.com/lounge/WutheringWaves/board/detail/7610207",
     "web_link": null,
     "urgent_tag": "",
-    "is_new": true
+    "is_new": false
   },
   {
     "game": "명조",
@@ -37,7 +37,7 @@
     "lounge_link": "https://game.naver.com/lounge/WutheringWaves/board/detail/7601671",
     "web_link": null,
     "urgent_tag": "",
-    "is_new": true
+    "is_new": false
   },
   {
     "game": "명조",
@@ -47,7 +47,7 @@
     "lounge_link": "https://game.naver.com/lounge/WutheringWaves/board/detail/7602059",
     "web_link": "https://chzzk.naver.com/category/GAME/WutheringWaves/lives",
     "urgent_tag": "",
-    "is_new": true
+    "is_new": false
   },
   {
     "game": "명조",
@@ -56,8 +56,8 @@
     "period": "05.02(토) 23:59 ~ 05.08(금) 23:59",
     "lounge_link": "https://game.naver.com/lounge/WutheringWaves/board/detail/7615146",
     "web_link": null,
-    "urgent_tag": "",
-    "is_new": true
+    "urgent_tag": "D-2",
+    "is_new": false
   },
   {
     "game": "명조",
@@ -67,47 +67,17 @@
     "lounge_link": "https://game.naver.com/lounge/WutheringWaves/board/detail/7610362",
     "web_link": "https://www.ticketlink.co.kr/product/63023",
     "urgent_tag": "",
+    "is_new": false
+  },
+  {
+    "game": "젠레스 존 제로",
+    "category": "인 게임",
+    "title": "「부토피아 구출 작전」 이벤트",
+    "period": "05.07(목) 11:00 ~ 06.15(월) 04:59",
+    "lounge_link": "https://game.naver.com/lounge/ZZZ/board/detail/7627378",
+    "web_link": null,
+    "urgent_tag": "",
     "is_new": true
-  },
-  {
-    "game": "젠레스 존 제로",
-    "category": "인 게임",
-    "title": "「신규 프로그램」 이벤트",
-    "period": "02.07(토) 23:59 ~ 05.05(화) 04:59",
-    "lounge_link": "https://game.naver.com/lounge/ZZZ/board/detail/7447315",
-    "web_link": null,
-    "urgent_tag": "D-1",
-    "is_new": false
-  },
-  {
-    "game": "젠레스 존 제로",
-    "category": "인 게임",
-    "title": "「펄펄 끓는 미식 탐방기」 이벤트",
-    "period": "03.25(수) 11:00 ~ 05.05(화) 04:59",
-    "lounge_link": "https://game.naver.com/lounge/ZZZ/board/detail/7447513",
-    "web_link": null,
-    "urgent_tag": "D-1",
-    "is_new": false
-  },
-  {
-    "game": "젠레스 존 제로",
-    "category": "인 게임",
-    "title": "「오랜 친구, 새로운 의뢰!」 이벤트",
-    "period": "04.15(수) 11:00 ~ 05.05(화) 04:59",
-    "lounge_link": "https://game.naver.com/lounge/ZZZ/board/detail/7536665",
-    "web_link": null,
-    "urgent_tag": "D-1",
-    "is_new": false
-  },
-  {
-    "game": "젠레스 존 제로",
-    "category": "인 게임",
-    "title": "「대모험의 1프레임」 이벤트",
-    "period": "04.22(수) 11:00 ~ 05.05(화) 04:59",
-    "lounge_link": "https://game.naver.com/lounge/ZZZ/board/detail/7558465",
-    "web_link": null,
-    "urgent_tag": "D-1",
-    "is_new": false
   },
   {
     "game": "젠레스 존 제로",
@@ -137,6 +107,16 @@
     "lounge_link": "https://game.naver.com/lounge/Trickcal/board/detail/7609888",
     "web_link": null,
     "urgent_tag": "",
+    "is_new": false
+  },
+  {
+    "game": "트릭컬 리바이브",
+    "category": "쿠폰",
+    "title": "55PALPALDAY",
+    "period": "05.05(화) 23:59 ~ 05.10(일) 23:59",
+    "lounge_link": "https://game.naver.com/lounge/Trickcal/board/detail/7625826",
+    "web_link": null,
+    "urgent_tag": "",
     "is_new": true
   },
   {
@@ -146,7 +126,7 @@
     "period": "04.23(목) 23:59 ~ 05.07(목) 10:59",
     "lounge_link": "https://game.naver.com/lounge/Trickcal/board/detail/7562103",
     "web_link": null,
-    "urgent_tag": "D-3",
+    "urgent_tag": "D-1",
     "is_new": false
   },
   {
@@ -156,7 +136,7 @@
     "period": "04.23(목) 23:59 ~ 05.07(목) 10:59",
     "lounge_link": "https://game.naver.com/lounge/Trickcal/board/detail/7562114",
     "web_link": null,
-    "urgent_tag": "D-3",
+    "urgent_tag": "D-1",
     "is_new": false
   },
   {
@@ -166,7 +146,7 @@
     "period": "04.23(목) 23:59 ~ 05.07(목) 10:59",
     "lounge_link": "https://game.naver.com/lounge/Trickcal/board/detail/7562117",
     "web_link": null,
-    "urgent_tag": "D-3",
+    "urgent_tag": "D-1",
     "is_new": false
   }
 ]
